@@ -35,6 +35,12 @@ PyramidSpacePlugin >> connectOn: aPyramidEditor [
 	self resetSpace
 ]
 
+{ #category : #'as yet unclassified' }
+PyramidSpacePlugin >> increasedScale: aCollectionOfBlElement [
+
+	aCollectionOfBlElement do: [ :element | element bounds inspect ] 
+]
+
 { #category : #initialization }
 PyramidSpacePlugin >> initialize [
 	
@@ -68,7 +74,9 @@ PyramidSpacePlugin >> makePresenterWithBlSpace: aBlSpace [
 			 do: [ :evt | self updateMorphInCaseOfFaillure: morph ]).
 
 	self morphicPresenter morph: morph.
-	self morphicPresenter whenDisplayDo: [ aBlSpace show ]
+	self morphicPresenter whenDisplayDo: [ aBlSpace show ].
+	
+	
 ]
 
 { #category : #accessing }

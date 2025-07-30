@@ -4,7 +4,8 @@ Class {
 	#traits : 'TPyramidSpaceExtension + TPyramidEditorExtension',
 	#classTraits : 'TPyramidSpaceExtension classTrait + TPyramidEditorExtension classTrait',
 	#instVars : [
-		'display'
+		'display',
+		'scaleFactor'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -18,11 +19,12 @@ PyramidPositionExtension >> display [
 { #category : #initialization }
 PyramidPositionExtension >> initialize [
 
+	scaleFactor := 1.
 	display := (0 @ 0) asRopedText asElement.
 	display
 		background: Color white;
 		zIndex: 1;
-		padding: (BlInsets all: 3).
+		padding: (BlInsets all: 3)
 ]
 
 { #category : #displaying }
@@ -34,6 +36,18 @@ PyramidPositionExtension >> installOn: aBuilder [
 			 on: BlMouseMoveEvent
 			 do: [ :evt |
 				 self display text:
-					 (evt position - self currentTransformTranslation) asRopedText ]).
+					 (evt position - self currentTransformTranslation / scaleFactor) rounded asRopedText ]).
 	self elementAtDisplaysAddons addChild: self display
+]
+
+{ #category : #accessing }
+PyramidPositionExtension >> scaleFactor [
+
+	^ scaleFactor
+]
+
+{ #category : #accessing }
+PyramidPositionExtension >> scaleFactor: aScale [
+	
+	scaleFactor := aScale
 ]

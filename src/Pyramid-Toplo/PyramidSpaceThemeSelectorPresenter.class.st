@@ -16,6 +16,29 @@ PyramidSpaceThemeSelectorPresenter >> applyTheme [
 	self projectModel informElementsChanged
 ]
 
+{ #category : #accessing }
+PyramidSpaceThemeSelectorPresenter >> builder [
+
+	^ builder
+]
+
+{ #category : #accessing }
+PyramidSpaceThemeSelectorPresenter >> builder: anObject [
+
+	builder:= anObject.
+]
+
+{ #category : #accessing }
+PyramidSpaceThemeSelectorPresenter >> editor: aPyramidEditor [
+]
+
+{ #category : #displaying }
+PyramidSpaceThemeSelectorPresenter >> installOn: aBuilder [
+
+	self builder: aBuilder.
+		
+]
+
 { #category : #initialization }
 PyramidSpaceThemeSelectorPresenter >> labelPresenter [
 

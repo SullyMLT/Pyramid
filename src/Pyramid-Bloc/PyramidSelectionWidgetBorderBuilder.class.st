@@ -74,7 +74,7 @@ PyramidSelectionWidgetBorderBuilder >> leftChild [
 	leftChild := (self
 		   borderElementWithMainColor: self mainLeftColor
 		   andSecondaryColor: self secondaryLeftColor).
-	leftChild 
+	leftChild
 		             constraintsDo: [ :c |
 			             c horizontal exact: self defaultWidth.
 			             c vertical matchParent.

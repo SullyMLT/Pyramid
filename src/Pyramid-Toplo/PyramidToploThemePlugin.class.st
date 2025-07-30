@@ -13,7 +13,7 @@ Class {
 { #category : #asserting }
 PyramidToploThemePlugin class >> shouldInstall [
 
-	^ false
+	^ true
 ]
 
 { #category : #adding }
@@ -128,7 +128,7 @@ PyramidToploThemePlugin >> addPanelsOn: aPyramidSimpleWindow [
 			makeTab: self themePresenter
 			label: 'Toplo-Theme'
 			icon: (Smalltalk ui icons iconNamed: #smallPushpin)
-			order: 1 ]
+			order: 0 ]
 ]
 
 { #category : #actions }
@@ -143,7 +143,14 @@ PyramidToploThemePlugin >> configureBuilder: aPyramidEditorBuilder [
 PyramidToploThemePlugin >> connectOn: aPyramidEditor [
 
 	self themePresenter editor: aPyramidEditor.
-	self themePropertyManager projectModel: aPyramidEditor projectModel 
+	
+	self themePropertyManager projectModel: aPyramidEditor projectModel.
+	
+	self themePresenter projectModel: aPyramidEditor projectModel.
+	
+	self themePresenter treeTableStampPresenter projectModel: aPyramidEditor projectModel.
+	
+	self themePresenter treeTableStampPresenter styleSheetEditor: self themePresenter styleSheetEditor.
 ]
 
 { #category : #initialization }
@@ -154,7 +161,9 @@ PyramidToploThemePlugin >> initialize [
 		                        presenterStrategy:
 			                        PyramidThemePropertyStrategy new;
 		                        yourself.
-	themePresenter styleSheetEditor stampPresenter: themePropertyManager mainPresenter
+	themePresenter styleSheetEditor stampPresenter: themePropertyManager mainPresenter.
+	
+	themePresenter treeTableStampPresenter pyramidPropertiesStrategy: PyramidThemePropertyStrategy new.
 ]
 
 { #category : #accessing }

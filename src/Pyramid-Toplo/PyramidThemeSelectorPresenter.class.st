@@ -96,7 +96,8 @@ PyramidThemeSelectorPresenter >> labelPresenter [
 PyramidThemeSelectorPresenter >> selectTheme: aToTheme [
 
 	self triggerThemeChangement: false.
-	self themeSelector selectItem: aToTheme.
+	self themeSelector items do: [:theme | (theme class) = (aToTheme class) ifTrue: [ self themeSelector selectItem: (theme) ]].
+	"self themeSelector selectItem: aToTheme."
 	self triggerThemeChangement: true.
 	
 ]
