@@ -50,14 +50,21 @@ PyramidSpecShortcutPaste >> pasteElement [
 
 { #category : #'accessing - classes' }
 PyramidSpecShortcutPaste >> pluginFromPyramid: aPyramidEditor [
-	"Connect selection array"
-
+	
+	| listOfPlugins pluginSorted |
+	
 	self elementCollectionSelected: aPyramidEditor.
-	"get copyPastePlugin"
-	plugin := aPyramidEditor findPlugin: PyramidCopyPastePlugin.
-	"Get navigationPlugin"
-	navigationPlugin := aPyramidEditor findPlugin:
-		                    PyramidNavigationPlugin
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidCopyPastePlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	plugin := pluginSorted asArray first.
+	
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidNavigationPlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	navigationPlugin := pluginSorted asArray first
 ]
 
 { #category : #accessing }

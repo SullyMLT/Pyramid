@@ -31,9 +31,14 @@ PyramidSpecShortcutRemoveElement >> initialize [
 
 { #category : #'accessing - classes' }
 PyramidSpecShortcutRemoveElement >> pluginFromPyramid: aPyramidEditor [
-
-	plugin := aPyramidEditor findPlugin:
-		                    PyramidNavigationPlugin
+	
+	| listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidNavigationPlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	plugin := pluginSorted asArray first
 ]
 
 { #category : #accessing }

@@ -32,15 +32,20 @@ PyramidSpecShortcutGrid >> initialize [
 { #category : #'accessing - classes' }
 PyramidSpecShortcutGrid >> pluginFromPyramid: aPyramidEditor [
 
-	| spacePlugin listOfSpaceExtension pyramidMainExtensionSet |
-	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
+	| spacePlugin extensionList extensionSorted listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpacePlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	spacePlugin := pluginSorted asArray first.
 
-	listOfSpaceExtension := spacePlugin builder extensions.
+	extensionList := spacePlugin builder extensions.
 
-	pyramidMainExtensionSet := listOfSpaceExtension select: [ :extensions |
+	extensionSorted := extensionList select: [ :extensions |
 		                           extensions isKindOf: PyramidMainExtension ].
-	pyramidMainExtensionSet size = 1 ifFalse: [ ^ self ].
-	plugin := pyramidMainExtensionSet asArray first
+	extensionSorted size = 1 ifFalse: [ ^ self ].
+	plugin := extensionSorted asArray first
 ]
 
 { #category : #accessing }

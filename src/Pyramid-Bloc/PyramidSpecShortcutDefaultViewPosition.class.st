@@ -20,8 +20,14 @@ PyramidSpecShortcutDefaultViewPosition >> defaultKeyCombination [
 
 { #category : #'accessing - classes' }
 PyramidSpecShortcutDefaultViewPosition >> pluginFromPyramid: aPyramidEditor [
-
-	plugin := aPyramidEditor findPlugin: PyramidSpaceMovePlugin
+	
+	| listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpaceMovePlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	plugin := pluginSorted asArray first
 ]
 
 { #category : #accessing }

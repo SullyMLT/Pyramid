@@ -32,9 +32,14 @@ PyramidSpecShortcutMoveChildUpInParent >> initialize [
 
 { #category : #'accessing - classes' }
 PyramidSpecShortcutMoveChildUpInParent >> pluginFromPyramid: aPyramidEditor [
-
-	plugin := aPyramidEditor findPlugin:
-		                           PyramidMoveChildInParentPlugin
+	
+	| listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidMoveChildInParentPlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	plugin := pluginSorted asArray first
 ]
 
 { #category : #accessing }

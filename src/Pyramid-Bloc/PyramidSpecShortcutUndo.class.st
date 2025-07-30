@@ -31,8 +31,14 @@ PyramidSpecShortcutUndo >> initialize [
 
 { #category : #'accessing - classes' }
 PyramidSpecShortcutUndo >> pluginFromPyramid: aPyramidEditor [
-
-	plugin := aPyramidEditor findPlugin: PyramidHistoryPlugin
+	
+	| listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidHistoryPlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	plugin := pluginSorted asArray first
 ]
 
 { #category : #accessing }
