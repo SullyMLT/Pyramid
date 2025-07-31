@@ -18,7 +18,8 @@ Class {
 		'moveEventBottomAndRight',
 		'currentTranslationBottomAndRight',
 		'positionOriginBottomAndRight',
-		'resizeElementColor'
+		'resizeElementColor',
+		'resizerContainer'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -69,7 +70,7 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 					 self inform: 'salutbottomAndRightResizer'.
 					 self positionOriginBottomAndRight: evt position
 						 "- pyramidSelectionWidgetExtension currentTransformTranslation".
-					 "bottomAndRightResizer"aBlElement addEventHandler:
+					 aBlElement addEventHandler:
 						 moveEventBottomAndRight.
 					 evt consumed: true ]).
 				
@@ -110,7 +111,8 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 	bottomResizer := BlElement new.
 	bottomResizer background: resizeElementColor;
 						id: 'bottomResizer';
-						size: resizeElementSize.
+						size: resizeElementSize;
+						position: (resizerContainer size x /2)@(resizerContainer size y-10).
 	bottomResizer constraintsDo: [ :c |
 	c frame horizontal alignCenter.
 	c frame vertical alignBottom].
@@ -121,7 +123,7 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 					 self inform: 'salutBottomResizer'.
 					 self positionOriginBottom: evt position
 						 "- pyramidSelectionWidgetExtension currentTransformTranslation".
-					 "bottomResizer"aBlElement addEventHandler:
+					 aBlElement addEventHandler:
 						 moveEventBottom.
 					 evt consumed: true ]).
 				
@@ -174,7 +176,7 @@ PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 					 self inform: 'salutRightResizer'.
 					 self positionOriginRight: evt position
 						 "- pyramidSelectionWidgetExtension currentTransformTranslation".
-					 "rightResizer"aBlElement addEventHandler:
+					 aBlElement addEventHandler:
 						 moveEventRight.
 					 evt consumed: true ]).
 			
@@ -219,13 +221,12 @@ PyramidDynamicResizer >> currentTranslationRight: aPosition [
 
 { #category : #'as yet unclassified' }
 PyramidDynamicResizer >> dynamicResizer: aBlOverlayElement originElement: aBlElement [
-
-	| resizerContainer |
 	
 	resizerContainer := BlElement new.
 	resizerContainer id:'dynamicResizer';
 							zIndex: 1001.
-	resizerContainer layout: BlFrameLayout new.
+	"resizerContainer layout: BlFrameLayout new."
+	resizerContainer layout: BlBasicLayout new.
 	resizerContainer constraints horizontal matchParent.
 	resizerContainer constraints vertical matchParent.
 	
@@ -282,13 +283,15 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 				"pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventRight" ].
 
 				  self currentTranslationBottom: evt position - self positionOriginBottom.
-				  bottomDynamicSize transformDo: [
-					  :t | t translateBy: 0@(self currentTranslationBottom y) ].
 				  aBlElement size: 
 						(aBlElement size x
 						@ 
 						((aBlElement size y) + (self currentTranslationBottom y))).
+				  bottomDynamicSize transformDo: [
+					  :t | t translateBy: 0@(self currentTranslationBottom y) ].
+				  
 				  self positionOriginBottom: evt position "- pyramidSelectionWidgetExtension currentTransformTranslation".
+				self inform: self currentTranslationBottom y asString.
 				  evt consumed: true ]
 ]
 

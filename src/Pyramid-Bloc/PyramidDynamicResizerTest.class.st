@@ -22,9 +22,6 @@ PyramidDynamicResizerTest >> createBlocDynamicResizer [
 	
 	resizer dynamicResizer: test originElement: test.
 	
-	
-	
 	space show 
-
 
 ]

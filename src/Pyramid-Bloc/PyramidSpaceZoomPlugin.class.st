@@ -18,7 +18,8 @@ Class {
 		'pyramidPositionExtension',
 		'slider',
 		'scaledZoom',
-		'maxScaleValue'
+		'maxScaleValue',
+		'space'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -57,7 +58,7 @@ PyramidSpaceZoomPlugin >> connectOn: aPyramidEditor [
 
 	self installOnZoomSpace.
 	
-	pyramidSelectionWidgetExtension elementAtDisplaysAddons zIndex: 1001.
+	"pyramidSelectionWidgetExtension elementAtDisplaysAddons zIndex: 1001."
 ]
 
 { #category : #'as yet unclassified' }
@@ -116,31 +117,14 @@ PyramidSpaceZoomPlugin >> initialize [
 
 	display := BlElement new.
 	display id:'zoom-plugin';
-		layout:  (BlLinearLayout vertical).
+		layout:  BlFrameLayout new.
+	display constraints horizontal matchParent.
+	display constraints vertical matchParent.
+	
 	display
-		zIndex: 1;
-		padding: (BlInsets all: 2);
+		padding: (BlInsets all: 2)";
 		size: 0@100;
-		position: 0 @ 740.
-	display constraints vertical fitContent.
-	display constraints horizontal fitContent.
-	
-	"labelContainer := BlElement new.
-	labelContainer id:'zoom-label-container';
-	layout: BlLinearLayout horizontal.
-	labelContainer background: Color white.
-	labelContainer size: 80@20.
-	""labelContainer constraints vertical matchParent.""
-	
-	zoomText := (self currentScale * 100) rounded asString.
-	
-	label := ToLabel new.
-	label background: Color white.
-	label text: 'Zoom : ' , zoomText , '%'.
-	
-	labelContainer addChild: label.
-
-	self display addChild: labelContainer"
+		position: 0 @ 740".
 ]
 
 { #category : #displaying }
@@ -240,10 +224,31 @@ PyramidSpaceZoomPlugin >> scaledZoom [
 	^ scaledZoom
 ]
 
+{ #category : #accessing }
+PyramidSpaceZoomPlugin >> space [
+
+	^ space
+]
+
+{ #category : #accessing }
+PyramidSpaceZoomPlugin >> space: aSpace [
+
+	space := aSpace 
+]
+
 { #category : #connecting }
 PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 
-	self createZoomSlider
+	pyramidWheelTransformExtension elementAtDisplaysAddons constraints horizontal matchParent.
+	pyramidWheelTransformExtension elementAtDisplaysAddons constraints vertical matchParent.
+	
+	self space: pyramidWheelTransformExtension elementAtDisplaysAddons space.
+	
+	self createZoomSlider.
+	
+	(aPyramidEditor window services at: 'space') presenter morph update
+	
+	
 ]
 
 { #category : #'as yet unclassified' }

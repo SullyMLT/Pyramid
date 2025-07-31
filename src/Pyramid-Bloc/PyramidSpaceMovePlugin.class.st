@@ -15,7 +15,8 @@ Class {
 		'spacePlugin',
 		'space',
 		'OriginMovement',
-		'defaultPositionButton'
+		'defaultPositionButton',
+		'editor'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -24,10 +25,12 @@ Class {
 PyramidSpaceMovePlugin >> connectOn: aPyramidEditor [
 
 	self pluginFromPyramid: aPyramidEditor.
+	
+	self editor: aPyramidEditor.
 
 	self installOnMoveSpace.
 	
-	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
+	"pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001."
 ]
 
 { #category : #accessing }
@@ -49,6 +52,18 @@ PyramidSpaceMovePlugin >> defaultViewPosition [
 				t translateBy: (50@50 - pyramidWheelTransformExtension elementAtTransforms position) ]
 ]
 
+{ #category : #accessing }
+PyramidSpaceMovePlugin >> editor [
+
+	^ editor
+]
+
+{ #category : #accessing }
+PyramidSpaceMovePlugin >> editor: aPyramidEditor [
+
+	editor := aPyramidEditor 
+]
+
 { #category : #initialization }
 PyramidSpaceMovePlugin >> initialize [
 
@@ -65,13 +80,15 @@ PyramidSpaceMovePlugin >> installOnMoveSpace [
 
 	pyramidWheelTransformExtension elementAtMain addEventHandler:
 		(BlEventHandler
-			 on: BlPrimaryMouseDownEvent
+			 on: BlPrimaryMouseDownEvent "BlMiddleMouseDownEvent"
 			 do: [ :evt |
 				 | moveTo |
 				 moveTo := nil.
 				 pyramidWheelTransformExtension isOnlyCtrlKeyPressed ifTrue: [
 					 moveTo := evt position ].
 				 moveTo ifNotNil: [
+					"self inform: 'salut'.
+					(self editor window services at: 'space') presenter morph removeHalo."
 					 self positionOrigin: evt position
 						 - pyramidWheelTransformExtension currentTransformTranslation.
 					 pyramidWheelTransformExtension elementAtMain addEventHandler:
@@ -89,7 +106,7 @@ PyramidSpaceMovePlugin >> moveSpaceEventRight [
 			  evt primaryButtonPressed ifFalse: [
 				  pyramidWheelTransformExtension elementAtMain
 					  removeEventHandler: moveEvent ].
-
+				
 			  pyramidWheelTransformExtension isOnlyCtrlKeyPressed ifTrue: [
 				  self currentTranslation: evt position - self positionOrigin.
 				  pyramidWheelTransformExtension elementAtTransforms transformDo: [
@@ -139,10 +156,4 @@ PyramidSpaceMovePlugin >> space [
 PyramidSpaceMovePlugin >> space: aSpace [
 
 	space := aSpace
-]
-
-{ #category : #connecting }
-PyramidSpaceMovePlugin >> windowOpenBy: aPyramidEditor [
-
-	"(pyramidWheelTransformExtension elementAtDisplaysAddons childWithId: 'zoom-plugin') addChild: defaultPositionButton."
 ]

@@ -26,8 +26,14 @@ PyramidSpaceShortcutSave >> defaultKeyCombination [
 
 { #category : #'accessing - classes' }
 PyramidSpaceShortcutSave >> pluginFromPyramid: aPyramidEditor [
-
-	plugin := aPyramidEditor findPlugin: PyramidSavePlugin
+	
+	| listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSavePlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	plugin := pluginSorted asArray first
 ]
 
 { #category : #accessing }
