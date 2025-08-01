@@ -128,7 +128,7 @@ PyramidToploThemePlugin >> addPanelsOn: aPyramidSimpleWindow [
 			makeTab: self themePresenter
 			label: 'Toplo-Theme'
 			icon: (Smalltalk ui icons iconNamed: #smallPushpin)
-			order: 0 ]
+			order: 6 ]
 ]
 
 { #category : #actions }

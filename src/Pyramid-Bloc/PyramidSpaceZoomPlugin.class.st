@@ -9,7 +9,7 @@ Class {
 	#traits : 'TPyramidPlugin',
 	#classTraits : 'TPyramidPlugin classTrait',
 	#instVars : [
-		'currentScale',
+		'currentScaleFactor',
 		'pyramidWheelTransformExtension',
 		'display',
 		'pyramidSelectionWidgetExtension',
@@ -18,8 +18,7 @@ Class {
 		'pyramidPositionExtension',
 		'slider',
 		'scaledZoom',
-		'maxScaleValue',
-		'space'
+		'maxScaleValue'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -27,25 +26,25 @@ Class {
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement [
 	
-	pyramidSelectionWidgetExtension scaleFactor: self currentScale.
-	pyramidPositionExtension scaleFactor: self currentScale.
+	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
+	pyramidPositionExtension scaleFactor: self currentScaleFactor.
 	
 	self refreshScaledZoom.
 	
-	aBlElement transformDo: [ :t | t scaleBy: self currentScale.
+	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
 											t translateBy: self scaledZoom ]
 ]
 
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement scaleValue: aValue [
 	
-	self currentScale: aValue.
-	pyramidSelectionWidgetExtension scaleFactor: self currentScale.
-	pyramidPositionExtension scaleFactor: self currentScale.
+	self currentScaleFactor: aValue.
+	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
+	pyramidPositionExtension scaleFactor: self currentScaleFactor.
 	
 	self refreshScaledZoom.
 
-	aBlElement transformDo: [ :t | t scaleBy: self currentScale.
+	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
 											t translateBy: self scaledZoom ]
 ]
 
@@ -54,7 +53,7 @@ PyramidSpaceZoomPlugin >> connectOn: aPyramidEditor [
 
 	self pluginFromPyramid: aPyramidEditor.
 
-	pyramidSelectionWidgetExtension scaleFactor: self currentScale.
+	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
 
 	self installOnZoomSpace.
 	
@@ -76,21 +75,21 @@ PyramidSpaceZoomPlugin >> createZoomSlider [
 ]
 
 { #category : #accessing }
-PyramidSpaceZoomPlugin >> currentScale [
+PyramidSpaceZoomPlugin >> currentScaleFactor [
 
-	^ currentScale
+	^ currentScaleFactor
 ]
 
 { #category : #accessing }
-PyramidSpaceZoomPlugin >> currentScale: aValue [
+PyramidSpaceZoomPlugin >> currentScaleFactor: aValue [
 
-	currentScale := aValue.
+	currentScaleFactor := aValue.
 ]
 
 { #category : #accessing }
 PyramidSpaceZoomPlugin >> defaultScale [
 
-	self currentScale: 1.
+	self currentScaleFactor: 1.
 	pyramidSelectionWidgetExtension ifNotNil: [
 		self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain scaleValue: 1 ]
 ]
@@ -112,19 +111,16 @@ PyramidSpaceZoomPlugin >> initialize [
 
 	"| zoomText |"
 	self scaleLap: 0.1.
-	self currentScale: 1.
+	self currentScaleFactor: 1.
 	self maxScaleValue: 3.5.
 
 	display := BlElement new.
 	display id:'zoom-plugin';
+		width: 1;
+		clipChildren: false;
+		padding: (BlInsets all: 2);
 		layout:  BlFrameLayout new.
-	display constraints horizontal matchParent.
 	display constraints vertical matchParent.
-	
-	display
-		padding: (BlInsets all: 2)";
-		size: 0@100;
-		position: 0 @ 740".
 ]
 
 { #category : #displaying }
@@ -199,10 +195,10 @@ PyramidSpaceZoomPlugin >> pluginFromPyramid: aPyramidEditor [
 PyramidSpaceZoomPlugin >> refreshScaledZoom [
 
 	scaledZoom := pyramidWheelTransformExtension elementAtMain size x
-						                   * (self currentScale - 1 / 2)
+						                   * (self currentScaleFactor - 1 / 2)
 						                   @
 						                   (pyramidWheelTransformExtension elementAtMain size y
-						                    * (self currentScale - 1 / 2)).
+						                    * (self currentScaleFactor - 1 / 2)).
 ]
 
 { #category : #accessing }
@@ -224,49 +220,33 @@ PyramidSpaceZoomPlugin >> scaledZoom [
 	^ scaledZoom
 ]
 
-{ #category : #accessing }
-PyramidSpaceZoomPlugin >> space [
-
-	^ space
-]
-
-{ #category : #accessing }
-PyramidSpaceZoomPlugin >> space: aSpace [
-
-	space := aSpace 
-]
-
 { #category : #connecting }
 PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
-
-	pyramidWheelTransformExtension elementAtDisplaysAddons constraints horizontal matchParent.
+	
+	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
+	
 	pyramidWheelTransformExtension elementAtDisplaysAddons constraints vertical matchParent.
 	
-	self space: pyramidWheelTransformExtension elementAtDisplaysAddons space.
-	
 	self createZoomSlider.
-	
-	(aPyramidEditor window services at: 'space') presenter morph update
-	
 	
 ]
 
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> zoomIn [
 
-	self currentScale >= slider sliderMaxScale  ifTrue: [ ^ self ].
+	self currentScaleFactor >= slider sliderMaxScale  ifTrue: [ ^ self ].
 
-	self currentScale: self currentScale + scaleLap.
+	self currentScaleFactor: self currentScaleFactor + scaleLap.
 	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain.
-	slider blocToMoveZoomPosition: self currentScale.
+	slider blocToMoveZoomPosition: self currentScaleFactor.
 ]
 
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> zoomOut [
 
-	self currentScale <= (scaleLap + slider sliderMinScale) ifTrue: [ ^ self ].
+	self currentScaleFactor <= (scaleLap + slider sliderMinScale) ifTrue: [ ^ self ].
 
-	self currentScale: self currentScale - scaleLap.
+	self currentScaleFactor: self currentScaleFactor - scaleLap.
 	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain.
-	slider blocToMoveZoomPosition: self currentScale.
+	slider blocToMoveZoomPosition: self currentScaleFactor.
 ]

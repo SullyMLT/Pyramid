@@ -30,7 +30,7 @@ PyramidSpaceMovePlugin >> connectOn: aPyramidEditor [
 
 	self installOnMoveSpace.
 	
-	"pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001."
+	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
 ]
 
 { #category : #accessing }
@@ -131,7 +131,16 @@ PyramidSpaceMovePlugin >> pluginFromPyramid: aPyramidEditor [
 	pyramidWheelTransformExtensionSet size = 1 ifFalse: [ ^ self ].
 
 	pyramidWheelTransformExtension := pyramidWheelTransformExtensionSet
-		                                  asArray first
+		                                  asArray first.
+		
+	"pyramidMainExtensionSet := listOfSpaceExtension select: [
+		                                     :extensions |
+		                                     extensions isKindOf:
+			                                     PyramidWheelTransformExtension ].
+	pyramidMainExtensionSet size = 1 ifFalse: [ ^ self ].
+
+	pyramidMainExtension := pyramidMainExtensionSet
+		                                  asArray first"
 ]
 
 { #category : #accessing }
