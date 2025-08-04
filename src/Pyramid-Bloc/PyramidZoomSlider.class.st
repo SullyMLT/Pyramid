@@ -126,9 +126,10 @@ PyramidZoomSlider >> refreshSlider [
 	sliderContainerWidth := sliderWidth + sliderPaddingWidth - sliderDefaultValue.
 
 	sliderContainer := BlElement new.
-	sliderContainer
+	sliderContainer id: 'zoomSlider';
 		background: Color white;
 		size: sliderContainerWidth @ 35;
+		position: 80@0;
 		zIndex: 1001.
 	sliderContainer  constraintsDo: [ :c |
 			c frame horizontal alignLeft.

@@ -32,7 +32,8 @@ PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement [
 	self refreshScaledZoom.
 	
 	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
-											t translateBy: self scaledZoom ]
+											t translateBy: self scaledZoom ].
+	slider blocToMoveZoomPosition: self currentScaleFactor.
 ]
 
 { #category : #'as yet unclassified' }
@@ -45,7 +46,8 @@ PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement scaleValue: aValue
 	self refreshScaledZoom.
 
 	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
-											t translateBy: self scaledZoom ]
+											t translateBy: self scaledZoom ].
+	slider blocToMoveZoomPosition: self currentScaleFactor.
 ]
 
 { #category : #connecting }
@@ -55,9 +57,7 @@ PyramidSpaceZoomPlugin >> connectOn: aPyramidEditor [
 
 	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
 
-	self installOnZoomSpace.
-	
-	"pyramidSelectionWidgetExtension elementAtDisplaysAddons zIndex: 1001."
+	self installOnZoomSpace
 ]
 
 { #category : #'as yet unclassified' }
@@ -68,9 +68,10 @@ PyramidSpaceZoomPlugin >> createZoomSlider [
 		self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain scaleValue: scaleValue ].
 	
 	slider scaledZoomValue: self maxScaleValue.
-	
 	scaleLap := slider sliderLapScale.
-	(pyramidWheelTransformExtension elementAtDisplaysAddons childWithId: 'zoom-plugin') addChild: slider createSlider.
+	
+	"(pyramidWheelTransformExtension elementAtDisplaysAddons childWithId: 'zoom-plugin') addChild: slider createSlider" 
+	^ slider createSlider.
 	
 ]
 
@@ -94,6 +95,23 @@ PyramidSpaceZoomPlugin >> defaultScale [
 		self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain scaleValue: 1 ]
 ]
 
+{ #category : #'as yet unclassified' }
+PyramidSpaceZoomPlugin >> defaultScaleButton [ 
+	
+	| button elementButton |
+	button := ToButton new
+		  icon: (ToImage new innerImage: (self iconNamed: #smallFullscreen));
+		  clickAction: [ self defaultScale ];
+		  yourself.
+		
+	elementButton := (BlElement new id:'defaultScaleButton') 
+							clipChildren: false;
+							size: 32@20.		
+	elementButton addChild: button.
+	
+	^ elementButton 
+]
+
 { #category : #accessing }
 PyramidSpaceZoomPlugin >> display [
 
@@ -109,18 +127,9 @@ PyramidSpaceZoomPlugin >> display: aDisplay [
 { #category : #initialization }
 PyramidSpaceZoomPlugin >> initialize [
 
-	"| zoomText |"
 	self scaleLap: 0.1.
 	self currentScaleFactor: 1.
 	self maxScaleValue: 3.5.
-
-	display := BlElement new.
-	display id:'zoom-plugin';
-		width: 1;
-		clipChildren: false;
-		padding: (BlInsets all: 2);
-		layout:  BlFrameLayout new.
-	display constraints vertical matchParent.
 ]
 
 { #category : #displaying }
@@ -138,8 +147,6 @@ PyramidSpaceZoomPlugin >> installOnZoomSpace [
 					 moveTo = (5 @ 0) asPoint
 						 ifTrue: [ self zoomIn ]
 						 ifFalse: [ self zoomOut ] ] ]).
-	pyramidWheelTransformExtension elementAtDisplaysAddons addChild:
-		self display
 ]
 
 { #category : #accessing }
@@ -222,12 +229,26 @@ PyramidSpaceZoomPlugin >> scaledZoom [
 
 { #category : #connecting }
 PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
+
+	| position |
+
+	position := (pyramidWheelTransformExtension elementAtDisplaysAddons childWithId: 'position').
 	
-	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
+	pyramidWheelTransformExtension elementAtDisplaysAddons removeChild: position.
 	
-	pyramidWheelTransformExtension elementAtDisplaysAddons constraints vertical matchParent.
+	pyramidWheelTransformExtension elementAtDisplaysAddons layout: BlLinearLayout new.
+	pyramidWheelTransformExtension elementAtDisplaysAddons layout horizontalAlignment: BlElementAlignment horizontal start.
+	pyramidWheelTransformExtension elementAtDisplaysAddons constraints horizontal matchParent.
+	pyramidWheelTransformExtension elementAtDisplaysAddons height: 1;
+																			zIndex: 1001.
+																			
+	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: self createZoomSlider.
+	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: self defaultScaleButton.
+	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: position.
 	
-	self createZoomSlider
+	
+	
+	
 ]
 
 { #category : #'as yet unclassified' }
@@ -236,8 +257,7 @@ PyramidSpaceZoomPlugin >> zoomIn [
 	self currentScaleFactor >= slider sliderMaxScale  ifTrue: [ ^ self ].
 
 	self currentScaleFactor: self currentScaleFactor + scaleLap.
-	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain.
-	slider blocToMoveZoomPosition: self currentScaleFactor.
+	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain
 ]
 
 { #category : #'as yet unclassified' }
@@ -246,6 +266,5 @@ PyramidSpaceZoomPlugin >> zoomOut [
 	self currentScaleFactor <= (scaleLap + slider sliderMinScale) ifTrue: [ ^ self ].
 
 	self currentScaleFactor: self currentScaleFactor - scaleLap.
-	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain.
-	slider blocToMoveZoomPosition: self currentScaleFactor.
+	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain
 ]

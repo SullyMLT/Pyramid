@@ -166,3 +166,10 @@ PyramidSpaceMovePlugin >> space: aSpace [
 
 	space := aSpace
 ]
+
+{ #category : #connecting }
+PyramidSpaceMovePlugin >> windowOpenBy: aPyramidEditor [
+
+	"pyramidWheelTransformExtension elementAtDisplaysAddons addChild: defaultPositionButton.
+	defaultPositionButton position: 0@ (pyramidWheelTransformExtension elementAtDisplaysAddons size y-30) "
+]

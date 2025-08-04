@@ -22,6 +22,7 @@ PyramidPositionExtension >> initialize [
 	scaleFactor := 1.
 	display := (0 @ 0) asRopedText asElement.
 	display
+		id: 'position';
 		background: Color white;
 		zIndex: 1;
 		padding: (BlInsets all: 3)
