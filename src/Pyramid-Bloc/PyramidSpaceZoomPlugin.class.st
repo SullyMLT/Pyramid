@@ -227,8 +227,7 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 	
 	pyramidWheelTransformExtension elementAtDisplaysAddons constraints vertical matchParent.
 	
-	self createZoomSlider.
-	
+	self createZoomSlider
 ]
 
 { #category : #'as yet unclassified' }
