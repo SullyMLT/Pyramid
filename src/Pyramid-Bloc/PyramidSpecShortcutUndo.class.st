@@ -45,14 +45,12 @@ PyramidSpecShortcutUndo >> pluginFromPyramid: aPyramidEditor [
 PyramidSpecShortcutUndo >> shortcutAction [
 
 	shortcutAction := PyramidSpecShortcutActionObject new.
-	^ shortcutAction shortcut: keyCombination;
-		                  action: [ 
-			                  plugin
-				                  ifNil: [
-					                  self inform:
-							                  'Plugin undo/redo is not installed' ]
-				                  ifNotNil: [
-					                  plugin history undo.
-					                  plugin projectModel
-						                  informElementsChanged ] ]
+	^ shortcutAction
+		  shortcut: keyCombination;
+		  action: [
+			  plugin
+				  ifNil: [ self inform: 'Plugin undo/redo is not installed' ]
+				  ifNotNil: [
+					  plugin history undo.
+					  plugin projectModel informElementsChanged ] ]
 ]

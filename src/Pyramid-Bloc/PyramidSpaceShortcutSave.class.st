@@ -21,18 +21,16 @@ PyramidSpaceShortcutSave >> defaultKeyCombination [
 	"CTRL + S to activate this shortcut"
 
 	keyCombination := (BlKeyCombination builder primary key:
-		                       KeyboardKey S) build
+		                   KeyboardKey S) build
 ]
 
 { #category : #'accessing - classes' }
 PyramidSpaceShortcutSave >> pluginFromPyramid: aPyramidEditor [
-	
+
 	| listOfPlugins pluginSorted |
-	
 	listOfPlugins := aPyramidEditor plugins.
 	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSavePlugin ].
-	pluginSorted size = 1
-	ifFalse: [^ self].
+	pluginSorted size = 1 ifFalse: [ ^ self ].
 	plugin := pluginSorted asArray first
 ]
 
@@ -40,11 +38,11 @@ PyramidSpaceShortcutSave >> pluginFromPyramid: aPyramidEditor [
 PyramidSpaceShortcutSave >> shortcutAction [
 
 	^ shortcutAction := BlShortcutWithAction new
-		                  name: 'Pyramid edition shortcut save';
-		                  combination: keyCombination;
-		                  action: [ :event |
-			                  plugin
-				                  ifNil: [
-					                  self inform: 'Plugin save is not installed' ]
-				                  ifNotNil: [ plugin saveAction ] ]
+		                    name: 'Pyramid edition shortcut save';
+		                    combination: keyCombination;
+		                    action: [ :event |
+			                    plugin
+				                    ifNil: [
+					                    self inform: 'Plugin save is not installed' ]
+				                    ifNotNil: [ plugin saveAction ] ]
 ]

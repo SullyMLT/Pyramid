@@ -50,7 +50,5 @@ PyramidSpecShortcutSave >> shortcutAction [
 		  action: [
 			  plugin
 				  ifNil: [ self inform: 'Plugin save is not installed' ]
-				  ifNotNil: [
-					  
-					  plugin saveAction ] ]
+				  ifNotNil: [ plugin saveAction ] ]
 ]

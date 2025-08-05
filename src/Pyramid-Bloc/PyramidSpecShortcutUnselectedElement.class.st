@@ -42,7 +42,5 @@ PyramidSpecShortcutUnselectedElement >> shortcutAction [
 		  action: [
 			  plugin
 				  ifNil: [ self inform: 'problem with the project model' ]
-				  ifNotNil: [
-					  
-					  plugin updateSelection ] ]
+				  ifNotNil: [ plugin updateSelection ] ]
 ]

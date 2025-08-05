@@ -44,11 +44,11 @@ TPyramidShortcutSpace >> pluginFromPyramid: aPyramidEditor [
 TPyramidShortcutSpace >> shortcutAction [
 
 	^ shortcutAction := BlShortcutWithAction new
-		                  name: 'Pyramid edition shortcut save';
-		                  combination: keyCombination;
-		                  action: [ :event |
-			                  plugin
-				                  ifNil: [
-					                  self inform: 'Plugin'"name of the plugin",' is not installed' ]
-				                  ifNotNil: [ "Action here" ] ]
+		                    name: 'Pyramid edition shortcut save';
+		                    combination: keyCombination;
+		                    action: [ :event |
+			                    plugin
+				                    ifNil: [
+					                    self inform: 'Plugin' , ' is not installed' "name of the plugin" ]
+				                    ifNotNil: [ "Action here" ] ]
 ]

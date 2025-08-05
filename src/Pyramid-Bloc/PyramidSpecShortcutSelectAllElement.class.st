@@ -65,7 +65,8 @@ PyramidSpecShortcutSelectAllElement >> shortcutAction [
 	shortcutAction := PyramidSpecShortcutActionObject new.
 	^ shortcutAction
 		  shortcut: keyCombination;
-		  action: [ plugin
+		  action: [
+			  plugin
 				  ifNil: [ self inform: 'problem with the project model' ]
 				  ifNotNil: [ self selectAll ] ]
 ]

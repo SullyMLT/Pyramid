@@ -24,8 +24,7 @@ PyramidSpecShortcutCopy >> copySelectedElementInSpace [
 	elementCollectionSelected isEmpty ifTrue: [ ^ self ].
 	elementCollectionSelected size = 1
 		ifTrue: [
-			plugin copyAsStonInClipboard:
-				elementCollectionSelected first.
+			plugin copyAsStonInClipboard: elementCollectionSelected first.
 			^ 1 ]
 		ifFalse: [ self inform: 'Can not copy multiple element' ]
 ]
