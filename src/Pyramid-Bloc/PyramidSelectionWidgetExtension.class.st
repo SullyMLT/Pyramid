@@ -139,8 +139,8 @@ PyramidSelectionWidgetExtension >> initialize [
 	isDragging := false.
 	movingLap := 1.
 	scaleFactor := 1.
-	"pyramidDynamicResizer := PyramidDynamicResizer new.
-	pyramidDynamicResizer pyramidSelectionWidgetExtension: self."
+	pyramidDynamicResizer := PyramidDynamicResizer new.
+	pyramidDynamicResizer pyramidSelectionWidgetExtension: self.
 ]
 
 { #category : #displaying }
@@ -196,6 +196,8 @@ PyramidSelectionWidgetExtension >> makeMonoSelectionFor: aBlElement [
 				                 do: [ :evt | self isDragging ifTrue: [ self centerDragEnd: evt ] ]);
 		                yourself.
 	borderElement := PyramidSelectionWidgetBorderBuilder new build.
+	
+	pyramidDynamicResizer installOnDynamicResizer: eventElement.
 	
 	monoSelection addChild: dragGhostElement.
 	monoSelection addChild: borderElement.
@@ -254,7 +256,7 @@ PyramidSelectionWidgetExtension >> projectModel: aProjectModel [
 		when: PyramidSelectionChangedEvent
 		do: [ :evt | self pyramidSelectionChanged: evt ]
 		for: self.
-	"pyramidDynamicResizer projectModel: aProjectModel."
+	pyramidDynamicResizer projectModel: aProjectModel.
 	self makeNewSelection
 	
 ]

@@ -11,7 +11,9 @@ Trait {
 { #category : #accessing }
 TPyramidShortcutSpace >> defaultKeyCombination [
 
-	
+	"CTRL + S as example"
+	keyCombination := "(BlKeyCombination builder primary key:
+		                       KeyboardKey S) build" nil
 ]
 
 { #category : #initialization }
@@ -41,11 +43,12 @@ TPyramidShortcutSpace >> pluginFromPyramid: aPyramidEditor [
 { #category : #accessing }
 TPyramidShortcutSpace >> shortcutAction [
 
-	shortcutAction := PyramidSpecShortcutActionObject new.
-	^ shortcutAction
-		  shortcut: keyCombination;
-		  action: [
-			  plugin
-				  ifNil: [ self inform: 'problem with the plugin' ]
-				  ifNotNil: [ "Action here" ] ]
+	^ shortcutAction := BlShortcutWithAction new
+		                  name: 'Pyramid edition shortcut save';
+		                  combination: keyCombination;
+		                  action: [ :event |
+			                  plugin
+				                  ifNil: [
+					                  self inform: 'Plugin'"name of the plugin",' is not installed' ]
+				                  ifNotNil: [ "Action here" ] ]
 ]
