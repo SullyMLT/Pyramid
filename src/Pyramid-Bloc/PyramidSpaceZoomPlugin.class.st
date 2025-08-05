@@ -163,7 +163,7 @@ PyramidSpaceZoomPlugin >> maxScaleValue: aScaleValue [
 { #category : #'accessing - classes' }
 PyramidSpaceZoomPlugin >> pluginFromPyramid: aPyramidEditor [
 
-	| listOfSpaceExtension pyramidWheelTransformExtensionSet pyramidSelectionWidgetExtensionSet pyramidPositionExtensionSet |
+	| listOfSpaceExtension pyramidWheelTransformExtensionSet  pyramidSelectionWidgetExtensionSet pyramidPositionExtensionSet |
 	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
 
 	listOfSpaceExtension := spacePlugin builder extensions.
@@ -264,8 +264,8 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 
 	pyramidWheelTransformExtension elementAtDisplaysAddons addChild:
 		aUIElement.
-
-	pyramidWheelTransformExtension elementAtDisplaysAddons inspect
+	
+	"pyramidWheelTransformExtension elementAtDisplaysAddons inspect"
 ]
 
 { #category : #'as yet unclassified' }
