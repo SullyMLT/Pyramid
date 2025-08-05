@@ -165,7 +165,7 @@ PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement 
 { #category : #initialization }
 PyramidDynamicResizer >> initialize [ 
 	
-	resizeElementSize := 10@10.
+	resizeElementSize := 7@7.
 	resizeElementColor := Color black.
 ]
 
@@ -188,7 +188,7 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 		  do: [ :evt |
 			  evt primaryButtonPressed ifFalse: [
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottom ]
-			  ifTrue: [
+			  ifTrue: [ 
 				  self currentTranslationBottom: evt position - self positionOriginBottom.
 				  bottomDynamicSize transformDo: [
 					  :t | t translateBy: 0@(self currentTranslationBottom y) ].
@@ -208,7 +208,7 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 		  do: [ :evt |
 			  evt primaryButtonPressed ifFalse: [
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottomAndRight ]
-			  ifTrue: [			
+			  ifTrue: [
 				  self currentTranslationBottomAndRight: evt position - self positionOriginBottomAndRight.
 				  bottomAndRightDynamicSize transformDo: [
 					  :t | t translateBy: self currentTranslationBottomAndRight ].

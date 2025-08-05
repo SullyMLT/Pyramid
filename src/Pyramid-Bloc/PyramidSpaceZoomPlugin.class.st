@@ -236,8 +236,8 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 	
 	pyramidWheelTransformExtension elementAtDisplaysAddons removeChild: position.
 	
-	pyramidWheelTransformExtension elementAtDisplaysAddons layout: BlLinearLayout new.
-	pyramidWheelTransformExtension elementAtDisplaysAddons layout horizontalAlignment: BlElementAlignment horizontal start.
+	"pyramidWheelTransformExtension elementAtDisplaysAddons layout: BlLinearLayout new.
+	pyramidWheelTransformExtension elementAtDisplaysAddons layout horizontalAlignment: BlElementAlignment horizontal start."
 	pyramidWheelTransformExtension elementAtDisplaysAddons constraints horizontal matchParent.
 	pyramidWheelTransformExtension elementAtDisplaysAddons height: 1;
 																			zIndex: 1001.
