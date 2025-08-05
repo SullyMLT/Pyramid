@@ -7,16 +7,10 @@ Class {
 	#traits : 'TPyramidPlugin',
 	#classTraits : 'TPyramidPlugin classTrait',
 	#instVars : [
-		'currentScale',
 		'positionOrigin',
 		'currentTranslation',
 		'moveEvent',
-		'pyramidWheelTransformExtension',
-		'spacePlugin',
-		'space',
-		'OriginMovement',
-		'defaultPositionButton',
-		'editor'
+		'pyramidWheelTransformExtension'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -25,12 +19,8 @@ Class {
 PyramidSpaceMovePlugin >> connectOn: aPyramidEditor [
 
 	self pluginFromPyramid: aPyramidEditor.
-	
-	self editor: aPyramidEditor.
 
-	self installOnMoveSpace.
-	
-	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
+	self installOnMoveSpace
 ]
 
 { #category : #accessing }
@@ -52,27 +42,28 @@ PyramidSpaceMovePlugin >> defaultViewPosition [
 				t translateBy: (50@50 - pyramidWheelTransformExtension elementAtTransforms position) ]
 ]
 
-{ #category : #accessing }
-PyramidSpaceMovePlugin >> editor [
+{ #category : #'as yet unclassified' }
+PyramidSpaceMovePlugin >> defaultViewPositionButton [
 
-	^ editor
-]
-
-{ #category : #accessing }
-PyramidSpaceMovePlugin >> editor: aPyramidEditor [
-
-	editor := aPyramidEditor 
+	| button elementButton |
+	button := ToButton new
+		  icon: (ToImage new innerImage: (self iconNamed: #haloDrag));
+		  clickAction: [ self defaultViewPosition ];
+		  yourself.
+		
+	elementButton := (BlElement new id:'defaultViewPositionButton') 
+							clipChildren: false;
+							position: 0@35;
+							size: 10@10.		
+	elementButton addChild: button.
+	
+	^ elementButton
 ]
 
 { #category : #initialization }
 PyramidSpaceMovePlugin >> initialize [
 
-	moveEvent := self moveSpaceEventRight.
-	defaultPositionButton := ToButton new
-			                 icon: (ToImage new innerImage: (self iconNamed: #smallFullscreen));
-			                 clickAction: [ self defaultViewPosition ];
-			                 yourself.
-	defaultPositionButton zIndex: 1.
+	moveEvent := self moveSpaceEvent
 ]
 
 { #category : #displaying }
@@ -80,15 +71,13 @@ PyramidSpaceMovePlugin >> installOnMoveSpace [
 
 	pyramidWheelTransformExtension elementAtMain addEventHandler:
 		(BlEventHandler
-			 on: BlPrimaryMouseDownEvent "BlMiddleMouseDownEvent"
+			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
 				 | moveTo |
 				 moveTo := nil.
 				 pyramidWheelTransformExtension isOnlyCtrlKeyPressed ifTrue: [
 					 moveTo := evt position ].
 				 moveTo ifNotNil: [
-					"self inform: 'salut'.
-					(self editor window services at: 'space') presenter morph removeHalo."
 					 self positionOrigin: evt position
 						 - pyramidWheelTransformExtension currentTransformTranslation.
 					 pyramidWheelTransformExtension elementAtMain addEventHandler:
@@ -98,7 +87,7 @@ PyramidSpaceMovePlugin >> installOnMoveSpace [
 ]
 
 { #category : #'as yet unclassified' }
-PyramidSpaceMovePlugin >> moveSpaceEventRight [
+PyramidSpaceMovePlugin >> moveSpaceEvent [
 
 	^ BlEventHandler
 		  on: BlMouseMoveEvent
@@ -117,10 +106,8 @@ PyramidSpaceMovePlugin >> moveSpaceEventRight [
 { #category : #'accessing - classes' }
 PyramidSpaceMovePlugin >> pluginFromPyramid: aPyramidEditor [
 
-	| listOfSpaceExtension pyramidWheelTransformExtensionSet |
+	| spacePlugin listOfSpaceExtension pyramidWheelTransformExtensionSet |
 	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
-
-	self space: spacePlugin builder space.
 
 	listOfSpaceExtension := spacePlugin builder extensions.
 
@@ -131,16 +118,7 @@ PyramidSpaceMovePlugin >> pluginFromPyramid: aPyramidEditor [
 	pyramidWheelTransformExtensionSet size = 1 ifFalse: [ ^ self ].
 
 	pyramidWheelTransformExtension := pyramidWheelTransformExtensionSet
-		                                  asArray first.
-		
-	"pyramidMainExtensionSet := listOfSpaceExtension select: [
-		                                     :extensions |
-		                                     extensions isKindOf:
-			                                     PyramidWheelTransformExtension ].
-	pyramidMainExtensionSet size = 1 ifFalse: [ ^ self ].
-
-	pyramidMainExtension := pyramidMainExtensionSet
-		                                  asArray first"
+		                                  asArray first
 ]
 
 { #category : #accessing }
@@ -155,21 +133,10 @@ PyramidSpaceMovePlugin >> positionOrigin: aPosition [
 	positionOrigin := aPosition.
 ]
 
-{ #category : #accessing }
-PyramidSpaceMovePlugin >> space [ 
-
-	^ space
-]
-
-{ #category : #accessing }
-PyramidSpaceMovePlugin >> space: aSpace [
-
-	space := aSpace
-]
-
 { #category : #connecting }
 PyramidSpaceMovePlugin >> windowOpenBy: aPyramidEditor [
-
-	"pyramidWheelTransformExtension elementAtDisplaysAddons addChild: defaultPositionButton.
-	defaultPositionButton position: 0@ (pyramidWheelTransformExtension elementAtDisplaysAddons size y-30) "
+	
+	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
+	
+	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: self defaultViewPositionButton
 ]

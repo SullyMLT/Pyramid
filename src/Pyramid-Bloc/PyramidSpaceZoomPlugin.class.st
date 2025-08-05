@@ -70,7 +70,6 @@ PyramidSpaceZoomPlugin >> createZoomSlider [
 	slider scaledZoomValue: self maxScaleValue.
 	scaleLap := slider sliderLapScale.
 	
-	"(pyramidWheelTransformExtension elementAtDisplaysAddons childWithId: 'zoom-plugin') addChild: slider createSlider" 
 	^ slider createSlider.
 	
 ]
@@ -230,25 +229,43 @@ PyramidSpaceZoomPlugin >> scaledZoom [
 { #category : #connecting }
 PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 
-	| position |
+	| position "defaultViewPositonButton" aUIElement |
+	aUIElement := BlElement new.
+	aUIElement
+		id: 'UI';
+		height: 1;
+		zIndex: 1001;
+		clipChildren: false.
+	aUIElement layout: BlLinearLayout new.
+	aUIElement layout horizontalAlignment:
+		BlElementAlignment horizontal start.
 
-	position := (pyramidWheelTransformExtension elementAtDisplaysAddons childWithId: 'position').
-	
-	pyramidWheelTransformExtension elementAtDisplaysAddons removeChild: position.
-	
-	"pyramidWheelTransformExtension elementAtDisplaysAddons layout: BlLinearLayout new.
-	pyramidWheelTransformExtension elementAtDisplaysAddons layout horizontalAlignment: BlElementAlignment horizontal start."
-	pyramidWheelTransformExtension elementAtDisplaysAddons constraints horizontal matchParent.
-	pyramidWheelTransformExtension elementAtDisplaysAddons height: 1;
-																			zIndex: 1001.
-																			
-	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: self createZoomSlider.
-	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: self defaultScaleButton.
-	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: position.
-	
-	
-	
-	
+	position := pyramidWheelTransformExtension elementAtDisplaysAddons
+		            childWithId: 'position'.
+		
+	"defaultViewPositonButton := pyramidWheelTransformExtension elementAtDisplaysAddons
+		            childWithId: 'defaultViewPositionButton'."
+
+	pyramidWheelTransformExtension elementAtDisplaysAddons removeChild:
+		position.
+	"pyramidWheelTransformExtension elementAtDisplaysAddons removeChild:
+		defaultViewPositonButton."
+		
+	pyramidWheelTransformExtension elementAtDisplaysAddons constraints
+		horizontal matchParent.
+	pyramidWheelTransformExtension elementAtDisplaysAddons
+		height: 1;
+		zIndex: 1001.
+
+	aUIElement addChild: self createZoomSlider.
+	aUIElement addChild: self defaultScaleButton.
+	aUIElement addChild: position.
+	"aUIElement addChild: defaultViewPositonButton."
+
+	pyramidWheelTransformExtension elementAtDisplaysAddons addChild:
+		aUIElement.
+
+	pyramidWheelTransformExtension elementAtDisplaysAddons inspect
 ]
 
 { #category : #'as yet unclassified' }

@@ -116,6 +116,7 @@ PyramidSelectionMakerExtension >> initialize [
 
 	isDragging := false.
 	selectionGhost := BlElement new
+							  id: 'selectionGhost';
 		                  background: Color blue translucent;
 		                  zIndex: 1;
 		                  visibility: BlVisibility gone;
