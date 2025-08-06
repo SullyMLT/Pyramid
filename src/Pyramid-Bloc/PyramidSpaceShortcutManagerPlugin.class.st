@@ -5,15 +5,6 @@ Shortcut only works when the space of Pyramid have the focus.
 
 List of current active shortcut (default value) :
 - Save -> ctrl + S
-- Undo -> ctrl + Z
-- Redo -> ctrl + Y
-- Copy -> ctrl + C
-- Paste -> ctrl + V
-- Cut -> ctrl + X
-- Grid visibility switch -> ctrl + G
-- Select all element -> ctrl + A
-- Delete selected element -> delete or suppr
-- Inspect one selected element -> ctrl + I
 "
 Class {
 	#name : #PyramidSpaceShortcutManagerPlugin,

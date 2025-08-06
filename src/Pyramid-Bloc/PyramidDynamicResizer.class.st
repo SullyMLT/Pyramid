@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'pyramidSelectionWidgetExtension',
 		'projectModel',
+		'editor',
 		'positionOriginRight',
 		'currentTranslationRight',
 		'rightDynamicSize',
@@ -25,7 +26,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-PyramidDynamicResizer >> createBottomAndRightResizerElement [
+PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 
 	| bottomAndRightResizer |
 	bottomAndRightResizer := BlElement new.
@@ -41,6 +42,8 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement [
 	bottomAndRightResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
+				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
+				 self resizeCommand: aBlElement with: (aBlElement size).
 				 self positionOriginBottomAndRight: evt position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottomAndRight.
@@ -50,7 +53,7 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement [
 ]
 
 { #category : #'as yet unclassified' }
-PyramidDynamicResizer >> createBottomResizerElement [
+PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 
 	| bottomResizer |
 	bottomResizer := BlElement new.
@@ -66,6 +69,8 @@ PyramidDynamicResizer >> createBottomResizerElement [
 	bottomResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
+				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
+				 self resizeCommand: aBlElement with: (aBlElement size).
 				 self positionOriginBottom: evt position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottom.
@@ -75,7 +80,7 @@ PyramidDynamicResizer >> createBottomResizerElement [
 ]
 
 { #category : #'as yet unclassified' }
-PyramidDynamicResizer >> createRightResizerElement [
+PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 
 	| rightResizer |
 	rightResizer := BlElement new.
@@ -91,6 +96,7 @@ PyramidDynamicResizer >> createRightResizerElement [
 	rightResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
+				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
 				 self positionOriginRight: evt position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventRight.
@@ -147,19 +153,31 @@ PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement 
 	resizeContainer constraints vertical matchParent.
 
 	moveEventRight := self moveSpaceEventRight: aBlElement.
-	rightDynamicSize := self createRightResizerElement.
+	rightDynamicSize := self createRightResizerElement: aBlElement.
 
 	moveEventBottom := self moveSpaceEventBottom: aBlElement.
-	bottomDynamicSize := self createBottomResizerElement.
+	bottomDynamicSize := self createBottomResizerElement: aBlElement.
 
 	moveEventBottomAndRight := self moveSpaceEventBottomAndRight: aBlElement.
-	bottomAndRightDynamicSize := self createBottomAndRightResizerElement.
+	bottomAndRightDynamicSize := self createBottomAndRightResizerElement: aBlElement.
 
 	resizeContainer addChild: rightDynamicSize.
 	resizeContainer addChild: bottomDynamicSize.
 	resizeContainer addChild: bottomAndRightDynamicSize.
 
 	eventElement addChild: resizeContainer
+]
+
+{ #category : #accessing }
+PyramidDynamicResizer >> editor [
+
+	^ editor
+]
+
+{ #category : #accessing }
+PyramidDynamicResizer >> editor: aPyramidEditor [
+
+	editor := aPyramidEditor 
 ]
 
 { #category : #initialization }
@@ -170,14 +188,14 @@ PyramidDynamicResizer >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
-PyramidDynamicResizer >> installOnDynamicResizer: aBlOverlayElement [
+PyramidDynamicResizer >> installOnDynamicResizer: aEventElement [
 
 	| originBlElement |
 	self projectModel selection size = 1 ifFalse: [ ^ self ].
 
 	originBlElement := self projectModel selection first.
 
-	self dynamicResizer: aBlOverlayElement originElement: originBlElement
+	self dynamicResizer: aEventElement originElement: originBlElement
 ]
 
 { #category : #'as yet unclassified' }
@@ -187,6 +205,9 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 		  on: BlMouseMoveEvent
 		  do: [ :evt |
 			  evt primaryButtonPressed ifFalse: [
+				  evt consumed: true.
+				  self resizeCommand: aBlElement with: (aBlElement size).
+				  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottom ]
 			  ifTrue: [ 
 				  self currentTranslationBottom: evt position - self positionOriginBottom.
@@ -207,6 +228,9 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 		  on: BlMouseMoveEvent
 		  do: [ :evt |
 			  evt primaryButtonPressed ifFalse: [
+				  evt consumed: true.
+				  self resizeCommand: aBlElement with: (aBlElement size).
+				  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottomAndRight ]
 			  ifTrue: [
 				  self currentTranslationBottomAndRight: evt position - self positionOriginBottomAndRight.
@@ -227,9 +251,13 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 		  on: BlMouseMoveEvent
 		  do: [ :evt |
 			  evt primaryButtonPressed ifFalse: [
+				  evt consumed: true.
+				  self resizeCommand: aBlElement with: (aBlElement size).
+				  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventRight ]
 			  ifTrue: [
 				  self currentTranslationRight: evt position - self positionOriginRight.
+				  
 				  rightDynamicSize transformDo: [
 					  :t | t translateBy: (self currentTranslationRight x)@0 ].
 				  aBlElement size: 
@@ -237,7 +265,7 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 						@ 
 						(aBlElement size y)).
 					self positionOriginRight: evt position.
-				  evt consumed: true ] ]
+				   ] ]
 ]
 
 { #category : #accessing }
@@ -292,4 +320,14 @@ PyramidDynamicResizer >> projectModel: aPyramidProjectModel [
 PyramidDynamicResizer >> pyramidSelectionWidgetExtension: aPyramidSelectionWidgetExtension [
 
 	pyramidSelectionWidgetExtension := aPyramidSelectionWidgetExtension 
+]
+
+{ #category : #'as yet unclassified' }
+PyramidDynamicResizer >> resizeCommand: aBlElement with: aSize [
+
+	self editor commandExecutor
+		use: PyramidDynamicResizeCommand new
+		on: {aBlElement}
+		with: aSize
+
 ]

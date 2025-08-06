@@ -119,7 +119,9 @@ PyramidSelectionWidgetExtension >> dragOrigin: anObject [
 PyramidSelectionWidgetExtension >> editor: aPyramidEditor [
 
 	self commandExecutor:
-		aPyramidEditor commandExecutor
+		aPyramidEditor commandExecutor.
+	
+	pyramidDynamicResizer editor: aPyramidEditor.
 ]
 
 { #category : #events }
@@ -139,6 +141,7 @@ PyramidSelectionWidgetExtension >> initialize [
 	isDragging := false.
 	movingLap := 1.
 	scaleFactor := 1.
+	
 	pyramidDynamicResizer := PyramidDynamicResizer new.
 	pyramidDynamicResizer pyramidSelectionWidgetExtension: self.
 ]
