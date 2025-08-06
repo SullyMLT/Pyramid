@@ -183,7 +183,7 @@ PyramidDynamicResizer >> editor: aPyramidEditor [
 { #category : #initialization }
 PyramidDynamicResizer >> initialize [ 
 	
-	resizeElementSize := 7@7.
+	resizeElementSize := 8@8.
 	resizeElementColor := Color black.
 ]
 
@@ -194,7 +194,8 @@ PyramidDynamicResizer >> installOnDynamicResizer: aEventElement [
 	self projectModel selection size = 1 ifFalse: [ ^ self ].
 
 	originBlElement := self projectModel selection first.
-
+	
+	(originBlElement size) < (30@30) ifTrue: [ ^ self ].
 	self dynamicResizer: aEventElement originElement: originBlElement
 ]
 
@@ -211,8 +212,6 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottom ]
 			  ifTrue: [ 
 				  self currentTranslationBottom: evt position - self positionOriginBottom.
-				  bottomDynamicSize transformDo: [
-					  :t | t translateBy: 0@(self currentTranslationBottom y) ].
 				  aBlElement size: 
 						(aBlElement size x
 						@ 
@@ -234,8 +233,6 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottomAndRight ]
 			  ifTrue: [
 				  self currentTranslationBottomAndRight: evt position - self positionOriginBottomAndRight.
-				  bottomAndRightDynamicSize transformDo: [
-					  :t | t translateBy: self currentTranslationBottomAndRight ].
 				  aBlElement size: 
 						(((aBlElement size x) + (self currentTranslationBottomAndRight x))
 						@ 
@@ -257,8 +254,6 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventRight ]
 			  ifTrue: [
 				  self currentTranslationRight: evt position - self positionOriginRight.
-				  rightDynamicSize transformDo: [
-					  :t | t translateBy: (self currentTranslationRight x)@0 ].
 				  aBlElement size: 
 						(((aBlElement size x) + (self currentTranslationRight x))
 						@ 
