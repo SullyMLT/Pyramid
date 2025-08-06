@@ -35,12 +35,6 @@ PyramidSpacePlugin >> connectOn: aPyramidEditor [
 	self resetSpace
 ]
 
-{ #category : #'as yet unclassified' }
-PyramidSpacePlugin >> increasedScale: aCollectionOfBlElement [
-
-	aCollectionOfBlElement do: [ :element | element bounds inspect ] 
-]
-
 { #category : #initialization }
 PyramidSpacePlugin >> initialize [
 	
