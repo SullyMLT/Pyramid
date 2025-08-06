@@ -45,19 +45,45 @@ PyramidSpaceMovePlugin >> defaultViewPosition [
 { #category : #'as yet unclassified' }
 PyramidSpaceMovePlugin >> defaultViewPositionButton [
 
-	| button elementButton |
-	button := ToButton new
-		  icon: (ToImage new innerImage: (self iconNamed: #haloDrag));
-		  clickAction: [ self defaultViewPosition ];
-		  yourself.
-		
-	elementButton := (BlElement new id:'defaultViewPositionButton') 
-							clipChildren: false;
-							position: 0@35;
-							size: 10@10.		
-	elementButton addChild: button.
+	| button image |
 	
-	^ elementButton
+	image := (BlElement new
+         constraintsDo: [:constraints |  constraints horizontal exact: 16.0.
+            constraints vertical exact: 16.0.
+            constraints frame horizontal alignCenter.
+            constraints frame vertical alignCenter ];
+         background: (BlImageBackground new
+               image: (PyramidExternalRessourceProxy new
+                     pyramidExternalRessourceSource: (PyramidExternalRessourceSource new
+                           target: Object;
+                           selector: #iconNamed:;
+                           arguments: {#haloDrag};
+                           yourself);
+                     yourself);
+               opacity: 1.0;
+               yourself)).
+	button := BlElement new
+   constraintsDo: [:constraints |  constraints horizontal exact: 20.0.
+      constraints vertical exact: 20.0 ];
+   background: (BlPaintBackground new
+         paint: (BlColorPaint new
+               color: (Color r: 1.0 g: 1.0 b: 1.0 alpha: 1.0);
+               yourself);
+         opacity: 1.0;
+         yourself);
+	position: 0@35;
+	border: Color black;
+   layout: BlFrameLayout new;
+   id: #defaultViewPositionButton;
+	addEventHandler: (BlEventHandler
+			 on: BlPrimaryMouseDownEvent
+			 do: [ :evt | 
+				self defaultViewPosition.
+				evt consumed: true ]).
+
+	button addChild: image.
+	
+	^ button
 ]
 
 { #category : #initialization }

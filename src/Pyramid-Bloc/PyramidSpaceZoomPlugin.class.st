@@ -97,18 +97,45 @@ PyramidSpaceZoomPlugin >> defaultScale [
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> defaultScaleButton [ 
 	
-	| button elementButton |
-	button := ToButton new
-		  icon: (ToImage new innerImage: (self iconNamed: #smallFullscreen));
-		  clickAction: [ self defaultScale ];
-		  yourself.
-		
-	elementButton := (BlElement new id:'defaultScaleButton') 
-							clipChildren: false;
-							size: 32@20.		
-	elementButton addChild: button.
+	| button image |
 	
-	^ elementButton 
+	image := (BlElement new
+         constraintsDo: [:constraints |  constraints horizontal exact: 16.0.
+            constraints vertical exact: 16.0.
+            constraints frame horizontal alignCenter.
+            constraints frame vertical alignCenter ];
+         background: (BlImageBackground new
+               image: (PyramidExternalRessourceProxy new
+                     pyramidExternalRessourceSource: (PyramidExternalRessourceSource new
+                           target: Object;
+                           selector: #iconNamed:;
+                           arguments: {#smallFullscreen};
+                           yourself);
+                     yourself);
+               opacity: 1.0;
+               yourself)).
+
+	button := BlElement new
+   constraintsDo: [:constraints |  constraints horizontal exact: 20.0.
+      constraints vertical exact: 20.0 ];
+   background: (BlPaintBackground new
+         paint: (BlColorPaint new
+               color: (Color r: 1.0 g: 1.0 b: 1.0 alpha: 1.0);
+               yourself);
+         opacity: 1.0;
+         yourself);
+	border: Color black;
+   layout: BlFrameLayout new;
+   id: #defaultScaleButton;
+	addEventHandler: (BlEventHandler
+			 on: BlPrimaryMouseDownEvent
+			 do: [ :evt | 
+				self defaultScale.
+				evt consumed: true ]).
+
+	button addChild: image.
+	
+	^ button
 ]
 
 { #category : #accessing }

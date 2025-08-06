@@ -257,7 +257,6 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventRight ]
 			  ifTrue: [
 				  self currentTranslationRight: evt position - self positionOriginRight.
-				  
 				  rightDynamicSize transformDo: [
 					  :t | t translateBy: (self currentTranslationRight x)@0 ].
 				  aBlElement size: 
