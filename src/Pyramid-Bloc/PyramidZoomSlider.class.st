@@ -95,25 +95,27 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 			  self dragSlider: true.
 			  evt primaryButtonPressed ifFalse: [
 				  sliderContainer removeEventHandler: moveEvent.
-				  self dragSlider: false. ].
+				  self dragSlider: false ].
 
 			  self currentBlocSliderTranslation:
 				  (evt position x - sliderContainer position x
 				   - blocToMove position x / sliderLap) rounded * sliderLap @ 0.
-			  blocToMove transformDo: [ :t |
-				  "Si inférieur à la taille max du slider (ligne)
-					if inferior to the max size of the slider (line)"
-				  self currentBlocSliderTranslation x < ((lineSliderWidth - sliderDefaultValue) + 1) 
-				  ifTrue: [
-					  "Si supérieur au début du slider (ligne)
-						if superior to the begin of the slider (line)"
-					  self currentBlocSliderTranslation x > ((sliderDefaultValue + 1) * -1)
+			  blocToMove transformDo: [ :t | "Intervalle si inférieur à la taille max du slider (ligne) 
+														et si supérieur à la taille minimum
+				  Interval if less than slider max size (line) and if greater than minimum size"
+				  self currentBlocSliderTranslation x < (lineSliderWidth - sliderDefaultValue + 1)
 					  ifTrue: [
-						  t translateBy: self currentBlocSliderTranslation.
-						  scaleValue := 1 + (self currentBlocSliderTranslation x / 100.0).
-						  blockAction value: scaleValue ]
-					  ifFalse: [ t translateBy: self minBlocMoveSliderLength ] ]
-				  ifFalse: [ t translateBy: self maxBlocMoveSliderLength ] ].
+						  self currentBlocSliderTranslation x > (sliderDefaultValue + 1 * -1)
+							  ifTrue: [
+								  t translateBy: self currentBlocSliderTranslation.
+								  scaleValue := 1 + (self currentBlocSliderTranslation x / 100.0) ]
+							  ifFalse: [
+								  t translateBy: self minBlocMoveSliderLength.
+								  scaleValue := 1 + (self minBlocMoveSliderLength x / 100.0) ] ]
+					  ifFalse: [
+						  t translateBy: self maxBlocMoveSliderLength.
+						  scaleValue := 1 + (self maxBlocMoveSliderLength x / 100.0) ].
+				  blockAction value: scaleValue ].
 			  evt consumed: true ]
 ]
 
@@ -184,6 +186,7 @@ PyramidZoomSlider >> refreshSlider [
 
 	sliderContainer addChild: lineSlider.
 	sliderContainer addChild: blocToMove.
+	sliderContainer localTheme: ToRawTheme new.
 	
 	^ sliderContainer
 ]

@@ -3,6 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'pyramidSelectionWidgetExtension',
+		'pyramidPositionExtension',
 		'projectModel',
 		'editor',
 		'positionOriginRight',
@@ -43,8 +44,7 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
 				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
-				 self resizeCommand: aBlElement with: (aBlElement size).
-				 self positionOriginBottomAndRight: evt position.
+				 self positionOriginBottomAndRight: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottomAndRight.
 				 evt consumed: true ]).
@@ -70,8 +70,7 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
 				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
-				 self resizeCommand: aBlElement with: (aBlElement size).
-				 self positionOriginBottom: evt position.
+				 self positionOriginBottom: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottom.
 				 evt consumed: true ]).
@@ -97,7 +96,7 @@ PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
 				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
-				 self positionOriginRight: evt position.
+				 self positionOriginRight: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventRight.
 				 evt consumed: true ]).
@@ -176,8 +175,18 @@ PyramidDynamicResizer >> editor [
 
 { #category : #accessing }
 PyramidDynamicResizer >> editor: aPyramidEditor [
-
-	editor := aPyramidEditor 
+	| spacePlugin listOfExtension extensionSorted |
+	
+	editor := aPyramidEditor.
+	
+	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
+	
+	listOfExtension := spacePlugin builder extensions.
+	
+	extensionSorted := listOfExtension select: [ :extensions |
+		                           extensions isKindOf: PyramidPositionExtension ].
+	extensionSorted size = 1 ifFalse: [ ^ self ].
+	pyramidPositionExtension := extensionSorted asArray first
 ]
 
 { #category : #initialization }
@@ -205,19 +214,18 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 	^ BlEventHandler
 		  on: BlMouseMoveEvent
 		  do: [ :evt |
-			  evt primaryButtonPressed ifFalse: [
-				  evt consumed: true.
-				  self resizeCommand: aBlElement with: (aBlElement size).
-				  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
-				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottom ]
-			  ifTrue: [ 
-				  self currentTranslationBottom: evt position - self positionOriginBottom.
-				  aBlElement size: 
-						(aBlElement size x
-						@ 
-						((aBlElement size y) + (self currentTranslationBottom y))).
-				  self positionOriginBottom: evt position.
-				  evt consumed: true ] ]
+			  evt primaryButtonPressed
+				  ifFalse: [
+					  evt consumed: true.
+					  self resizeCommand: aBlElement with: aBlElement size.
+					  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
+					  pyramidSelectionWidgetExtension elementAtEvents
+						  removeEventHandler: moveEventBottom ]
+				  ifTrue: [
+					  self currentTranslationBottom:
+						  pyramidPositionExtension position - self positionOriginBottom.
+					  aBlElement size:
+						  aBlElement size x @ self currentTranslationBottom y ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -226,19 +234,20 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 	^ BlEventHandler
 		  on: BlMouseMoveEvent
 		  do: [ :evt |
-			  evt primaryButtonPressed ifFalse: [
-				  evt consumed: true.
-				  self resizeCommand: aBlElement with: (aBlElement size).
-				  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
-				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventBottomAndRight ]
-			  ifTrue: [
-				  self currentTranslationBottomAndRight: evt position - self positionOriginBottomAndRight.
-				  aBlElement size: 
-						(((aBlElement size x) + (self currentTranslationBottomAndRight x))
-						@ 
-						((aBlElement size y) + (self currentTranslationBottomAndRight y))).
-				  self positionOriginBottomAndRight: evt position.
-				  evt consumed: true ] ]
+			  evt primaryButtonPressed
+				  ifFalse: [
+					  evt consumed: true.
+					  self resizeCommand: aBlElement with: aBlElement size.
+					  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
+					  pyramidSelectionWidgetExtension elementAtEvents
+						  removeEventHandler: moveEventBottomAndRight ]
+				  ifTrue: [
+					  self currentTranslationBottomAndRight:
+						  pyramidPositionExtension position
+						  - self positionOriginBottomAndRight.
+					  aBlElement size: self currentTranslationBottomAndRight x 
+											@ 
+											self currentTranslationBottomAndRight y ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -247,19 +256,18 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 	^ BlEventHandler
 		  on: BlMouseMoveEvent
 		  do: [ :evt |
-			  evt primaryButtonPressed ifFalse: [
-				  evt consumed: true.
-				  self resizeCommand: aBlElement with: (aBlElement size).
-				  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
-				  pyramidSelectionWidgetExtension elementAtEvents removeEventHandler: moveEventRight ]
-			  ifTrue: [
-				  self currentTranslationRight: evt position - self positionOriginRight.
-				  aBlElement size: 
-						(((aBlElement size x) + (self currentTranslationRight x))
-						@ 
-						(aBlElement size y)).
-					self positionOriginRight: evt position.
-				   ] ]
+			  evt primaryButtonPressed
+				  ifFalse: [
+					  evt consumed: true.
+					  self resizeCommand: aBlElement with: aBlElement size.
+					  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
+					  pyramidSelectionWidgetExtension elementAtEvents
+						  removeEventHandler: moveEventRight ]
+				  ifTrue: [
+					  self currentTranslationRight:
+						  pyramidPositionExtension position - self positionOriginRight.
+					  aBlElement size:
+						  self currentTranslationRight x @ aBlElement size y ] ]
 ]
 
 { #category : #accessing }
