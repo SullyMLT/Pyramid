@@ -1,8 +1,6 @@
 Class {
 	#name : #PyramidDynamicResizer,
 	#superclass : #Object,
-	#traits : 'TPyramidPlugin',
-	#classTraits : 'TPyramidPlugin classTrait',
 	#instVars : [
 		'pyramidSelectionWidgetExtension',
 		'pyramidPositionExtension',
@@ -25,18 +23,8 @@ Class {
 		'resizeElementColor',
 		'resizeContainer'
 	],
-	#category : #'Pyramid-Bloc-plugin-dynamic-resizer'
+	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
-
-{ #category : #connecting }
-PyramidDynamicResizer >> connectOn: aPyramidEditor [
-
-	self pluginFromPyramid: aPyramidEditor.
-	
-	self projectModel: aPyramidEditor projectModel.
-	
-	self editor: aPyramidEditor.
-]
 
 { #category : #adding }
 PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
@@ -70,7 +58,6 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 
 	| bottomResizer |
-	aBlElement size y < 30 ifTrue: [ ^ BlElement new size: 0 @ 0 ].
 	bottomResizer := BlElement new.
 	bottomResizer
 		background: resizeElementColor;
@@ -99,7 +86,6 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 
 	| rightResizer |
-	aBlElement size x < 30 ifTrue: [ ^ BlElement new size: 0 @ 0 ].
 	rightResizer := BlElement new.
 	rightResizer
 		background: resizeElementColor;
@@ -195,18 +181,9 @@ PyramidDynamicResizer >> editor [
 
 { #category : #accessing }
 PyramidDynamicResizer >> editor: aPyramidEditor [
-	| spacePlugin listOfExtension extensionSorted |
 	
 	editor := aPyramidEditor.
 	
-	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
-	
-	listOfExtension := spacePlugin builder extensions.
-	
-	extensionSorted := listOfExtension select: [ :extensions |
-		                           extensions isKindOf: PyramidPositionExtension ].
-	extensionSorted size = 1 ifFalse: [ ^ self ].
-	pyramidPositionExtension := extensionSorted asArray first
 ]
 
 { #category : #initialization }
@@ -244,7 +221,10 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 					  self currentTranslationBottom:
 						  pyramidPositionExtension position - self positionOriginBottom.
 					  aBlElement size:
-						  aBlElement size x @ self currentTranslationBottom y ] ]
+						  aBlElement size x @ self currentTranslationBottom y.
+					  aBlElement size y < 30
+						ifTrue:[ rightDynamicSize size: 0@0 ]
+						ifFalse:[ rightDynamicSize size: resizeElementSize ] ] ]
 ]
 
 { #category : #'event creation' }
@@ -266,7 +246,13 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 						  - self positionOriginBottomAndRight.
 					  aBlElement size: self currentTranslationBottomAndRight x 
 											@ 
-											self currentTranslationBottomAndRight y ] ]
+											self currentTranslationBottomAndRight y.
+					  aBlElement size y < 30
+						ifTrue:[ rightDynamicSize size: 0@0 ]
+						ifFalse:[ rightDynamicSize size: resizeElementSize ].
+					  aBlElement size x < 30
+						ifTrue:[ bottomDynamicSize size: 0@0 ]
+						ifFalse:[ bottomDynamicSize size: resizeElementSize ] ] ]
 ]
 
 { #category : #'event creation' }
@@ -286,7 +272,10 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 					  self currentTranslationRight:
 						  pyramidPositionExtension position - self positionOriginRight.
 					  aBlElement size:
-						  self currentTranslationRight x @ aBlElement size y ] ]
+						  self currentTranslationRight x @ aBlElement size y.
+					  (aBlElement size x) < 30
+						ifTrue:[ bottomDynamicSize size: 0@0 ]
+						ifFalse:[ bottomDynamicSize size: resizeElementSize ] ] ]
 ]
 
 { #category : #'accessing - classes' }
@@ -361,23 +350,7 @@ PyramidDynamicResizer >> projectModel [
 { #category : #accessing }
 PyramidDynamicResizer >> projectModel: aPyramidProjectModel [
 
-	projectModel := aPyramidProjectModel.
-	projectModel announcer
-		when: PyramidSelectionChangedEvent
-		do: [ :evt | self pyramidSelectionChanged: evt ]
-		for: self.
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> pyramidSelectionChanged: evt [
-	| overlay dragEventElement |
-	evt selection size = 1
-	ifFalse: [ ^ self ].
-	pyramidSelectionWidgetExtension pyramidSelectionChanged: evt.
-	overlay := ((pyramidSelectionWidgetExtension elementAtWidgets childWithId: 'currentSelection') children) first.
-
-	dragEventElement := (overlay childWithId: 'drag_event').
-	self installOnDynamicResizer: dragEventElement.
+	projectModel := aPyramidProjectModel
 ]
 
 { #category : #commands }
@@ -388,4 +361,14 @@ PyramidDynamicResizer >> resizeCommand: aBlElement with: aSize [
 		on: {aBlElement}
 		with: aSize
 
+]
+
+{ #category : #connecting }
+PyramidDynamicResizer >> setupExtension: aPyramidEditor [
+
+	self pluginFromPyramid: aPyramidEditor.
+	
+	self projectModel: aPyramidEditor projectModel.
+	
+	self editor: aPyramidEditor.
 ]
