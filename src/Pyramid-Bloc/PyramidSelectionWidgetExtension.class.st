@@ -13,7 +13,8 @@ Class {
 		'childCurrentTranslation',
 		'movingForGrid',
 		'scaleFactor',
-		'pyramidDynamicResizer'
+		'pyramidDynamicResizer',
+		'pyramidPositionExtension'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -45,8 +46,7 @@ PyramidSelectionWidgetExtension >> centerDragEvent: anEvent [
 	anEvent primaryButtonPressed ifFalse: [
 		self centerDragEnd: anEvent.
 		^ self ].
-	self childCurrentTranslation:
-		(((anEvent position - self dragOrigin)/scaleFactor) / movingLap) rounded * movingLap.
+	self childCurrentTranslation: (((anEvent position - self dragOrigin)/self scaleFactor) / self movingLap) rounded * self movingLap.
 	self widgetElement transformDo: [ :t | "Move the dragged and selected element with the lap of the grid spacing"
 		t translateBy: self childCurrentTranslation ].
 	anEvent consumed: true
@@ -55,7 +55,7 @@ PyramidSelectionWidgetExtension >> centerDragEvent: anEvent [
 { #category : #'as yet unclassified' }
 PyramidSelectionWidgetExtension >> centerDragStart: anEvent [
 
-	| firstSelected currentPos scaledLap |
+	| firstSelected currentPos |
 	self isDragging: true.
 	self dragOrigin: anEvent position.
 	anEvent consumed: true.
@@ -67,13 +67,11 @@ PyramidSelectionWidgetExtension >> centerDragStart: anEvent [
 	"Get the repositionning of the first selected element when the grid is active"
 	firstSelected := self widgetElement children at: 1.
 	currentPos := firstSelected position.
-	scaledLap := movingLap * scaleFactor.
 
-	self movingForGrid: currentPos
-		- ((firstSelected position / movingLap) rounded * movingLap).
+	self movingForGrid: currentPos.
 
 	self widgetElement childrenDo: [ :child | "Put the reposition of the first selected element to all selected element"
-		child position: child position - movingForGrid.
+		child position: child position - self movingForGrid.
 		child
 			childWithId: #drag_ghost
 			ifFound: [ :ghost | ghost visibility: BlVisibility visible ] ]
@@ -88,7 +86,7 @@ PyramidSelectionWidgetExtension >> childCurrentTranslation [
 { #category : #accessing }
 PyramidSelectionWidgetExtension >> childCurrentTranslation: aPoint [
 
-	childCurrentTranslation := aPoint
+	childCurrentTranslation := aPoint.
 ]
 
 { #category : #accessing }
@@ -117,9 +115,24 @@ PyramidSelectionWidgetExtension >> dragOrigin: anObject [
 
 { #category : #accessing }
 PyramidSelectionWidgetExtension >> editor: aPyramidEditor [
-
+	
+	| spacePlugin listOfSpaceExtension pyramidPositionExtensionSet |
+	
 	self commandExecutor:
 		aPyramidEditor commandExecutor.
+		
+	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
+		
+	listOfSpaceExtension := spacePlugin builder extensions.
+	
+	pyramidPositionExtensionSet := listOfSpaceExtension select: [
+		                               :extensions |
+		                               extensions isKindOf:
+			                               PyramidPositionExtension ].
+	pyramidPositionExtensionSet size = 1 ifFalse: [ ^ self ].
+
+	pyramidPositionExtension := pyramidPositionExtensionSet asArray first.
+		
 		
 	pyramidDynamicResizer setupExtension: aPyramidEditor.
 ]
@@ -222,9 +235,15 @@ PyramidSelectionWidgetExtension >> makeNewSelection [
 ]
 
 { #category : #accessing }
+PyramidSelectionWidgetExtension >> movingForGrid [
+
+	^ movingForGrid
+]
+
+{ #category : #accessing }
 PyramidSelectionWidgetExtension >> movingForGrid: aPoint [
 
-	movingForGrid := aPoint
+	movingForGrid := aPoint - ((aPoint / self movingLap) rounded * self movingLap)
 ]
 
 { #category : #accessing }
