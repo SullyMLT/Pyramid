@@ -18,6 +18,7 @@ List of current active shortcut (default value) :
 - Inspect one selected element -> ctrl + I
 - Move child index Up -> ctrl + Arrow Up
 - Move child index Down -> ctrl + Arrow Down
+- Move element to position zero -> ctrl + Space
 "
 Class {
 	#name : #PyramidSpecShortcutManagerPlugin,
@@ -60,6 +61,7 @@ PyramidSpecShortcutManagerPlugin >> initialize [
 	collectionOfShortcutClass add: PyramidSpecShortcutSelectAllElement new.
 	collectionOfShortcutClass add: PyramidSpecShortcutUnselectedElement new.
 	collectionOfShortcutClass add: PyramidSpecShortcutDefaultViewPosition new.
+	collectionOfShortcutClass add: PyramidSpecShortcutElementToPositionZero new.
 ]
 
 { #category : #accessing }
