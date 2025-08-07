@@ -26,7 +26,7 @@ Class {
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 
 	| bottomAndRightResizer |
@@ -52,7 +52,7 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 	^ bottomAndRightResizer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 
 	| bottomResizer |
@@ -78,7 +78,7 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 	^ bottomResizer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 
 	| rightResizer |
@@ -140,7 +140,7 @@ PyramidDynamicResizer >> currentTranslationRight: aPosition [
 	currentTranslationRight := aPosition
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement [
 
 	resizeContainer := BlElement new.
@@ -196,7 +196,7 @@ PyramidDynamicResizer >> initialize [
 	resizeElementColor := Color black.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 PyramidDynamicResizer >> installOnDynamicResizer: aEventElement [
 
 	| originBlElement |
@@ -208,7 +208,7 @@ PyramidDynamicResizer >> installOnDynamicResizer: aEventElement [
 	self dynamicResizer: aEventElement originElement: originBlElement
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'event creation' }
 PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 
 	^ BlEventHandler
@@ -228,7 +228,7 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 						  aBlElement size x @ self currentTranslationBottom y ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'event creation' }
 PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 
 	^ BlEventHandler
@@ -250,7 +250,7 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 											self currentTranslationBottomAndRight y ] ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'event creation' }
 PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 
 	^ BlEventHandler
@@ -324,7 +324,7 @@ PyramidDynamicResizer >> pyramidSelectionWidgetExtension: aPyramidSelectionWidge
 	pyramidSelectionWidgetExtension := aPyramidSelectionWidgetExtension 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #commands }
 PyramidDynamicResizer >> resizeCommand: aBlElement with: aSize [
 
 	self editor commandExecutor
