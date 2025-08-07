@@ -47,8 +47,6 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 					 at: #pyramidPreviousDynamicResize
 					 put: aBlElement size.
 				 self positionOriginBottomAndRight: aBlElement position.
-				 pyramidSelectionWidgetExtension movingForGrid:
-					 aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottomAndRight.
 				 evt consumed: true ]).
@@ -77,8 +75,6 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 					 at: #pyramidPreviousDynamicResize
 					 put: aBlElement size.
 				 self positionOriginBottom: aBlElement position.
-				 pyramidSelectionWidgetExtension movingForGrid:
-					 aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottom.
 				 evt consumed: true ]).
@@ -107,8 +103,6 @@ PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 					 at: #pyramidPreviousDynamicResize
 					 put: aBlElement size.
 				 self positionOriginRight: aBlElement position.
-				 pyramidSelectionWidgetExtension movingForGrid:
-					 aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventRight.
 				 evt consumed: true ]).
@@ -158,6 +152,7 @@ PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement 
 	resizeContainer := BlElement new.
 	resizeContainer
 		id: 'dynamicResizer';
+		clipChildren: false;
 		zIndex: 1001.
 	resizeContainer layout: BlFrameLayout new.
 	resizeContainer constraints horizontal matchParent.
@@ -224,6 +219,8 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 					  pyramidSelectionWidgetExtension elementAtEvents
 						  removeEventHandler: moveEventBottom ]
 				  ifTrue: [
+					  pyramidSelectionWidgetExtension movingForGrid:
+					 	aBlElement position.
 					  self currentTranslationBottom:
 						  pyramidPositionExtension position - self positionOriginBottom.
 					  aBlElement size:
@@ -249,6 +246,8 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 					  pyramidSelectionWidgetExtension elementAtEvents
 						  removeEventHandler: moveEventBottomAndRight ]
 				  ifTrue: [
+					  pyramidSelectionWidgetExtension movingForGrid:
+					 	aBlElement position.
 					  self currentTranslationBottomAndRight:
 						  pyramidPositionExtension position
 						  - self positionOriginBottomAndRight.
@@ -278,6 +277,8 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 					  pyramidSelectionWidgetExtension elementAtEvents
 						  removeEventHandler: moveEventRight ]
 				  ifTrue: [
+					  pyramidSelectionWidgetExtension movingForGrid:
+					 	aBlElement position.
 					  self currentTranslationRight:
 						  pyramidPositionExtension position - self positionOriginRight.
 					  aBlElement size:
