@@ -55,7 +55,9 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 	bottomAndRightResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
-				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
+				 aBlElement userData
+					 at: #pyramidPreviousDynamicResize
+					 put: aBlElement size.
 				 self positionOriginBottomAndRight: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottomAndRight.
@@ -68,6 +70,7 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 
 	| bottomResizer |
+	aBlElement size y < 30 ifTrue: [ ^ BlElement new size: 0 @ 0 ].
 	bottomResizer := BlElement new.
 	bottomResizer
 		background: resizeElementColor;
@@ -81,7 +84,9 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 	bottomResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
-				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
+				 aBlElement userData
+					 at: #pyramidPreviousDynamicResize
+					 put: aBlElement size.
 				 self positionOriginBottom: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottom.
@@ -94,6 +99,7 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 
 	| rightResizer |
+	aBlElement size x < 30 ifTrue: [ ^ BlElement new size: 0 @ 0 ].
 	rightResizer := BlElement new.
 	rightResizer
 		background: resizeElementColor;
@@ -107,7 +113,9 @@ PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 	rightResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
-				 aBlElement userData at: #pyramidPreviousDynamicResize put: (aBlElement size).
+				 aBlElement userData
+					 at: #pyramidPreviousDynamicResize
+					 put: aBlElement size.
 				 self positionOriginRight: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventRight.
@@ -216,7 +224,6 @@ PyramidDynamicResizer >> installOnDynamicResizer: aEventElement [
 
 	originBlElement := self projectModel selection first.
 	
-	(originBlElement size) < (30@30) ifTrue: [ ^ self ].
 	self dynamicResizer: aEventElement originElement: originBlElement
 ]
 
