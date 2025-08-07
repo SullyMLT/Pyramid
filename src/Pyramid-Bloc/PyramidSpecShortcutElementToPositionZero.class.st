@@ -18,7 +18,7 @@ PyramidSpecShortcutElementToPositionZero >> defaultKeyCombination [
 	keyCombination := Character space command mac | Character space control unix | Character space control win
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 PyramidSpecShortcutElementToPositionZero >> elementPositionZeroAction [
 	
 	| element |
