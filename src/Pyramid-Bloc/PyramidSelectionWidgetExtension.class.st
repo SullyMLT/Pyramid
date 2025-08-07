@@ -12,8 +12,7 @@ Class {
 		'movingLap',
 		'childCurrentTranslation',
 		'movingForGrid',
-		'scaleFactor',
-		'pyramidDynamicResizer'
+		'scaleFactor'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -119,9 +118,7 @@ PyramidSelectionWidgetExtension >> dragOrigin: anObject [
 PyramidSelectionWidgetExtension >> editor: aPyramidEditor [
 
 	self commandExecutor:
-		aPyramidEditor commandExecutor.
-	
-	pyramidDynamicResizer editor: aPyramidEditor.
+		aPyramidEditor commandExecutor
 ]
 
 { #category : #events }
@@ -134,16 +131,14 @@ PyramidSelectionWidgetExtension >> informTransformationChanged [
 PyramidSelectionWidgetExtension >> initialize [
 
 	widgetElement := BlElement new
+							 id: 'currentSelection';
 		                 clipChildren: false;
 		                 zIndex: 1;
 		                 yourself.
 	dragOrigin := 0 @ 0.
 	isDragging := false.
 	movingLap := 1.
-	scaleFactor := 1.
-	
-	pyramidDynamicResizer := PyramidDynamicResizer new.
-	pyramidDynamicResizer pyramidSelectionWidgetExtension: self.
+	scaleFactor := 1
 ]
 
 { #category : #displaying }
@@ -200,8 +195,6 @@ PyramidSelectionWidgetExtension >> makeMonoSelectionFor: aBlElement [
 		                yourself.
 	borderElement := PyramidSelectionWidgetBorderBuilder new build.
 	
-	pyramidDynamicResizer installOnDynamicResizer: eventElement.
-	
 	monoSelection addChild: dragGhostElement.
 	monoSelection addChild: borderElement.
 	monoSelection addChild: eventElement.
@@ -218,7 +211,6 @@ PyramidSelectionWidgetExtension >> makeNewSelection [
 		overlayElement := self makeMonoSelectionFor: each.
 		overlayElement id: ('overlay', nb asString) asSymbol.
 		self widgetElement addChild: overlayElement.
-		"pyramidDynamicResizer installOnDynamicResizer: overlayElement."
 	]
 ]
 
@@ -259,7 +251,7 @@ PyramidSelectionWidgetExtension >> projectModel: aProjectModel [
 		when: PyramidSelectionChangedEvent
 		do: [ :evt | self pyramidSelectionChanged: evt ]
 		for: self.
-	pyramidDynamicResizer projectModel: aProjectModel.
+	"pyramidDynamicResizer projectModel: aProjectModel."
 	self makeNewSelection
 	
 ]
