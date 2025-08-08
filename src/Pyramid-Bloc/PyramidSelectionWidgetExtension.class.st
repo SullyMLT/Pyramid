@@ -13,8 +13,7 @@ Class {
 		'childCurrentTranslation',
 		'movingForGrid',
 		'scaleFactor',
-		'pyramidDynamicResizer',
-		'pyramidPositionExtension'
+		'pyramidDynamicResizer'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -116,23 +115,8 @@ PyramidSelectionWidgetExtension >> dragOrigin: anObject [
 { #category : #accessing }
 PyramidSelectionWidgetExtension >> editor: aPyramidEditor [
 	
-	| spacePlugin listOfSpaceExtension pyramidPositionExtensionSet |
-	
 	self commandExecutor:
 		aPyramidEditor commandExecutor.
-		
-	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
-		
-	listOfSpaceExtension := spacePlugin builder extensions.
-	
-	pyramidPositionExtensionSet := listOfSpaceExtension select: [
-		                               :extensions |
-		                               extensions isKindOf:
-			                               PyramidPositionExtension ].
-	pyramidPositionExtensionSet size = 1 ifFalse: [ ^ self ].
-
-	pyramidPositionExtension := pyramidPositionExtensionSet asArray first.
-		
 		
 	pyramidDynamicResizer setupExtension: aPyramidEditor.
 ]
