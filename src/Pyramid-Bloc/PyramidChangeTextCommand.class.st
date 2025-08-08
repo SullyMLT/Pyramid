@@ -18,5 +18,7 @@ PyramidChangeTextCommand >> setValueFor: aBlTextElement with: aString [
 	rope := aString asRopedText.
 	
 	attributes do: [ :a | rope attribute: a ].
-	aBlTextElement text: rope
+	aBlTextElement text: rope.
+	"Fix label color on theme change when label is create during the session without copy or open from save"
+	aBlTextElement parent text: aString asRopedText.
 ]
