@@ -19,6 +19,8 @@ Class {
 PyramidSpaceMovePlugin >> connectOn: aPyramidEditor [
 
 	self pluginFromPyramid: aPyramidEditor.
+	
+	pyramidWheelTransformExtension ifNil: [ ^ self ].
 
 	self installOnMoveSpace
 ]
@@ -132,8 +134,13 @@ PyramidSpaceMovePlugin >> moveSpaceEvent [
 { #category : #'accessing - classes' }
 PyramidSpaceMovePlugin >> pluginFromPyramid: aPyramidEditor [
 
-	| spacePlugin listOfSpaceExtension pyramidWheelTransformExtensionSet |
-	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
+	| spacePlugin listOfSpaceExtension pyramidWheelTransformExtensionSet listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpacePlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	spacePlugin := pluginSorted asArray first.
 
 	listOfSpaceExtension := spacePlugin builder extensions.
 
@@ -161,6 +168,8 @@ PyramidSpaceMovePlugin >> positionOrigin: aPosition [
 
 { #category : #connecting }
 PyramidSpaceMovePlugin >> windowOpenBy: aPyramidEditor [
+	
+	pyramidWheelTransformExtension ifNil: [ ^ self ].
 	
 	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
 	

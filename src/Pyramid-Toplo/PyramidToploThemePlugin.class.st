@@ -134,8 +134,14 @@ PyramidToploThemePlugin >> addPanelsOn: aPyramidSimpleWindow [
 { #category : #actions }
 PyramidToploThemePlugin >> configureBuilder: aPyramidEditorBuilder [
 
-	| spacePlugin |
-	spacePlugin := aPyramidEditorBuilder findPlugin: #PyramidSpacePlugin.
+	| spacePlugin listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditorBuilder plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpacePlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	spacePlugin := pluginSorted asArray first.
+	
 	self themePresenter pyramidSpaceBuilderConfigurationOn: spacePlugin builder
 ]
 

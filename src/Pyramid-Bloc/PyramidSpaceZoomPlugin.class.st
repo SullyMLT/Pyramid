@@ -54,9 +54,11 @@ PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement scaleValue: aValue
 PyramidSpaceZoomPlugin >> connectOn: aPyramidEditor [
 
 	self pluginFromPyramid: aPyramidEditor.
-
+	
+	pyramidSelectionWidgetExtension ifNil: [ ^ self ].
+	
 	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
-
+	
 	self installOnZoomSpace
 ]
 
@@ -190,8 +192,13 @@ PyramidSpaceZoomPlugin >> maxScaleValue: aScaleValue [
 { #category : #'accessing - classes' }
 PyramidSpaceZoomPlugin >> pluginFromPyramid: aPyramidEditor [
 
-	| listOfSpaceExtension pyramidWheelTransformExtensionSet  pyramidSelectionWidgetExtensionSet pyramidPositionExtensionSet |
-	spacePlugin := aPyramidEditor findPlugin: PyramidSpacePlugin.
+	| listOfSpaceExtension pyramidWheelTransformExtensionSet  pyramidSelectionWidgetExtensionSet pyramidPositionExtensionSet listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpacePlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	spacePlugin := pluginSorted asArray first.
 
 	listOfSpaceExtension := spacePlugin builder extensions.
 
@@ -256,7 +263,7 @@ PyramidSpaceZoomPlugin >> scaledZoom [
 { #category : #connecting }
 PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 
-	| position "defaultViewPositonButton" aUIElement |
+	| position aUIElement |
 	aUIElement := BlElement new.
 	aUIElement
 		id: 'UI';
@@ -266,17 +273,14 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 	aUIElement layout: BlLinearLayout new.
 	aUIElement layout horizontalAlignment:
 		BlElementAlignment horizontal start.
+		
+	pyramidWheelTransformExtension ifNil: [ ^ self ].
 
 	position := pyramidWheelTransformExtension elementAtDisplaysAddons
 		            childWithId: 'position'.
-		
-	"defaultViewPositonButton := pyramidWheelTransformExtension elementAtDisplaysAddons
-		            childWithId: 'defaultViewPositionButton'."
 
 	pyramidWheelTransformExtension elementAtDisplaysAddons removeChild:
 		position.
-	"pyramidWheelTransformExtension elementAtDisplaysAddons removeChild:
-		defaultViewPositonButton."
 		
 	pyramidWheelTransformExtension elementAtDisplaysAddons constraints
 		horizontal matchParent.
@@ -287,12 +291,9 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 	aUIElement addChild: self createZoomSlider.
 	aUIElement addChild: self defaultScaleButton.
 	aUIElement addChild: position.
-	"aUIElement addChild: defaultViewPositonButton."
 
 	pyramidWheelTransformExtension elementAtDisplaysAddons addChild:
-		aUIElement.
-	
-	"pyramidWheelTransformExtension elementAtDisplaysAddons inspect"
+		aUIElement
 ]
 
 { #category : #'as yet unclassified' }
