@@ -21,7 +21,8 @@ Class {
 		'currentTranslationBottomAndRight',
 		'positionOriginBottomAndRight',
 		'resizeElementColor',
-		'resizeContainer'
+		'resizeContainer',
+		'minimumSizeForRightOrBottom'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -192,6 +193,7 @@ PyramidDynamicResizer >> initialize [
 	
 	resizeElementSize := 8@8.
 	resizeElementColor := Color black.
+	minimumSizeForRightOrBottom := 50.
 ]
 
 { #category : #actions }
@@ -227,7 +229,7 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 							aBlElement size x 
 							@ 
 							(self currentTranslationBottom y - pyramidSelectionWidgetExtension movingForGrid y).
-					  aBlElement size y < 30
+					  aBlElement size y < minimumSizeForRightOrBottom
 						ifTrue:[ rightDynamicSize size: 0@0 ]
 						ifFalse:[ rightDynamicSize size: resizeElementSize ] ] ]
 ]
@@ -255,10 +257,10 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 							(self currentTranslationBottomAndRight x - pyramidSelectionWidgetExtension movingForGrid x)
 						  	@ 
 							(self currentTranslationBottomAndRight y - pyramidSelectionWidgetExtension movingForGrid y).
-					  aBlElement size y < 30
+					  aBlElement size y < minimumSizeForRightOrBottom
 						  ifTrue: [ rightDynamicSize size: 0 @ 0 ]
 						  ifFalse: [ rightDynamicSize size: resizeElementSize ].
-					  aBlElement size x < 30
+					  aBlElement size x < minimumSizeForRightOrBottom
 						  ifTrue: [ bottomDynamicSize size: 0 @ 0 ]
 						  ifFalse: [ bottomDynamicSize size: resizeElementSize ] ] ]
 ]
@@ -285,7 +287,7 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 						  	(self currentTranslationRight x - pyramidSelectionWidgetExtension movingForGrid x)
 						  	@ 
 							(aBlElement size y).
-					  aBlElement size x < 30
+					  aBlElement size x < minimumSizeForRightOrBottom
 						  ifTrue: [ bottomDynamicSize size: 0 @ 0 ]
 						  ifFalse: [ bottomDynamicSize size: resizeElementSize ] ] ]
 ]
