@@ -6,23 +6,18 @@ Class {
 		'pyramidPositionExtension',
 		'projectModel',
 		'editor',
-		'positionOriginRight',
-		'currentTranslationRight',
 		'rightDynamicSize',
 		'overlayElement',
 		'moveEventRight',
 		'bottomDynamicSize',
 		'moveEventBottom',
-		'currentTranslationBottom',
-		'positionOriginBottom',
 		'resizeElementSize',
 		'bottomAndRightDynamicSize',
 		'moveEventBottomAndRight',
-		'currentTranslationBottomAndRight',
-		'positionOriginBottomAndRight',
 		'resizeElementColor',
-		'resizeContainer',
-		'minimumSizeForRightOrBottom'
+		'minimumSizeForRightOrBottom',
+		'currentTranslation',
+		'positionOrigin'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -47,7 +42,7 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 				 aBlElement userData
 					 at: #pyramidPreviousDynamicResize
 					 put: aBlElement size.
-				 self positionOriginBottomAndRight: aBlElement position.
+				 self positionOrigin: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottomAndRight.
 				 evt consumed: true ]).
@@ -75,7 +70,7 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 				 aBlElement userData
 					 at: #pyramidPreviousDynamicResize
 					 put: aBlElement size.
-				 self positionOriginBottom: aBlElement position.
+				 self positionOrigin: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventBottom.
 				 evt consumed: true ]).
@@ -103,7 +98,7 @@ PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 				 aBlElement userData
 					 at: #pyramidPreviousDynamicResize
 					 put: aBlElement size.
-				 self positionOriginRight: aBlElement position.
+				 self positionOrigin: aBlElement position.
 				 pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 					 moveEventRight.
 				 evt consumed: true ]).
@@ -112,43 +107,21 @@ PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 ]
 
 { #category : #accessing }
-PyramidDynamicResizer >> currentTranslationBottom [
+PyramidDynamicResizer >> currentTranslation [
 
-	^ currentTranslationBottom
+	^ currentTranslation
 ]
 
 { #category : #accessing }
-PyramidDynamicResizer >> currentTranslationBottom: aPosition [
+PyramidDynamicResizer >> currentTranslation: aPosition [
 
-	currentTranslationBottom := ((aPosition + pyramidSelectionWidgetExtension movingForGrid) / pyramidSelectionWidgetExtension movingLap) rounded * pyramidSelectionWidgetExtension movingLap
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> currentTranslationBottomAndRight [
-
-	^ currentTranslationBottomAndRight
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> currentTranslationBottomAndRight: aPosition [
-
-	currentTranslationBottomAndRight := ((aPosition + pyramidSelectionWidgetExtension movingForGrid) / pyramidSelectionWidgetExtension movingLap) rounded * pyramidSelectionWidgetExtension movingLap
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> currentTranslationRight [
-
-	^ currentTranslationRight
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> currentTranslationRight: aPosition [
-
-	currentTranslationRight := ((aPosition + pyramidSelectionWidgetExtension movingForGrid) / pyramidSelectionWidgetExtension movingLap) rounded * pyramidSelectionWidgetExtension movingLap
+	currentTranslation := ((aPosition + pyramidSelectionWidgetExtension movingForGrid) / pyramidSelectionWidgetExtension movingLap) rounded * pyramidSelectionWidgetExtension movingLap
 ]
 
 { #category : #adding }
 PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement [
+
+	| resizeContainer |
 
 	resizeContainer := BlElement new.
 	resizeContainer
@@ -223,12 +196,12 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 				  ifTrue: [
 					  pyramidSelectionWidgetExtension movingForGrid:
 					 	aBlElement position.
-					  self currentTranslationBottom:
-						  pyramidPositionExtension position - self positionOriginBottom.
+					  self currentTranslation:
+						  pyramidPositionExtension position - self positionOrigin.
 					  aBlElement size:
 							aBlElement size x 
 							@ 
-							(self currentTranslationBottom y - pyramidSelectionWidgetExtension movingForGrid y).
+							(self currentTranslation y - pyramidSelectionWidgetExtension movingForGrid y).
 					  aBlElement size y < minimumSizeForRightOrBottom
 						ifTrue:[ rightDynamicSize size: 0@0 ]
 						ifFalse:[ rightDynamicSize size: resizeElementSize ] ] ]
@@ -250,13 +223,12 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 				  ifTrue: [
 					  pyramidSelectionWidgetExtension movingForGrid:
 					 	aBlElement position.
-					  self currentTranslationBottomAndRight:
-						  pyramidPositionExtension position
-						  - self positionOriginBottomAndRight.
+					  self currentTranslation:
+						  pyramidPositionExtension position - self positionOrigin.
 					  aBlElement size: 
-							(self currentTranslationBottomAndRight x - pyramidSelectionWidgetExtension movingForGrid x)
+							(self currentTranslation x - pyramidSelectionWidgetExtension movingForGrid x)
 						  	@ 
-							(self currentTranslationBottomAndRight y - pyramidSelectionWidgetExtension movingForGrid y).
+							(self currentTranslation y - pyramidSelectionWidgetExtension movingForGrid y).
 					  aBlElement size y < minimumSizeForRightOrBottom
 						  ifTrue: [ rightDynamicSize size: 0 @ 0 ]
 						  ifFalse: [ rightDynamicSize size: resizeElementSize ].
@@ -281,10 +253,10 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 				  ifTrue: [
 					  pyramidSelectionWidgetExtension movingForGrid:
 					 	aBlElement position.
-					  self currentTranslationRight:
-						  pyramidPositionExtension position - self positionOriginRight.
+					  self currentTranslation:
+						  pyramidPositionExtension position - self positionOrigin.
 					  aBlElement size:
-						  	(self currentTranslationRight x - pyramidSelectionWidgetExtension movingForGrid x)
+						  	(self currentTranslation x - pyramidSelectionWidgetExtension movingForGrid x)
 						  	@ 
 							(aBlElement size y).
 					  aBlElement size x < minimumSizeForRightOrBottom
@@ -320,39 +292,15 @@ PyramidDynamicResizer >> pluginFromPyramid: aPyramidEditor [
 ]
 
 { #category : #accessing }
-PyramidDynamicResizer >> positionOriginBottom [
+PyramidDynamicResizer >> positionOrigin [
 
-	^ positionOriginBottom 
+	^ positionOrigin
 ]
 
 { #category : #accessing }
-PyramidDynamicResizer >> positionOriginBottom: aPosition [
+PyramidDynamicResizer >> positionOrigin: aPosition [
 
-	positionOriginBottom := aPosition 
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> positionOriginBottomAndRight [
-
-	^ positionOriginBottomAndRight
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> positionOriginBottomAndRight: aPosition [
-
-	positionOriginBottomAndRight := aPosition 
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> positionOriginRight [
-
-	^ positionOriginRight
-]
-
-{ #category : #accessing }
-PyramidDynamicResizer >> positionOriginRight: aPosition [
-
-	positionOriginRight := aPosition
+	positionOrigin := aPosition
 ]
 
 { #category : #accessing }
