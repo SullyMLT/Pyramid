@@ -44,6 +44,7 @@ PyramidMainExtension >> createGrid [
 	"Remove the current all the line of the grid"
 	self gridElement removeChildWithId: #gridHorizontal.
 	self gridElement removeChildWithId: #gridVertical.
+	"self gridElement removeChildWithId: #pixelGrid."
 	
 	"Create the grid if gridVisibility is true"
 	gridVisibility ifTrue: [	self grid: self gridElement 
@@ -131,7 +132,7 @@ PyramidMainExtension >> getSelectionWidgetExtension: aPyramidEditor [
 PyramidMainExtension >> grid: aParent cellSpacing: aNumber color: aColor width: aWidth height: aHeight [
 	
 	"Creation of the grid used by createGrid"
-	| elementGridHorizontal elementGridVertical nbLineGridHorizontal nbLineGridVertical lineGridModWidth lineGridModHeight |
+	| elementGridHorizontal elementGridVertical nbLineGridHorizontal nbLineGridVertical lineGridModWidth lineGridModHeight "pixelGrid" |
 	
 	elementGridHorizontal := BlElement new id: #gridHorizontal.
 	elementGridHorizontal layout: BlLinearLayout vertical.
@@ -144,6 +145,17 @@ PyramidMainExtension >> grid: aParent cellSpacing: aNumber color: aColor width: 
 	elementGridVertical layout cellSpacing: aNumber - 1.
 	elementGridVertical constraints horizontal matchParent.
 	elementGridVertical constraints vertical matchParent.
+	
+	"pixelGrid := BlElement new id: #pixelGrid.
+	pixelGrid constraints horizontal matchParent.
+	pixelGrid constraints vertical matchParent.
+	1 to: 200 do: [ :x | 
+		1 to: 200 do: [ :y |
+			pixelGrid addChild: (BlElement new size: (0.5@0.5);
+										position: (x-0.25)@(y-0.25);
+										background: Color black).
+		]
+	]."
 
 	"Number of line Horizontal"
 	lineGridModHeight := aHeight / aNumber.
@@ -178,7 +190,8 @@ PyramidMainExtension >> grid: aParent cellSpacing: aNumber color: aColor width: 
 
 	aParent addChildren: {
 			elementGridHorizontal.
-			elementGridVertical }
+			elementGridVertical .
+			"pixelGrid" }
 ]
 
 { #category : #accessing }

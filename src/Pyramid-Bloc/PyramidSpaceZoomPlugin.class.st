@@ -157,7 +157,7 @@ PyramidSpaceZoomPlugin >> initialize [
 
 	self scaleLap: 0.1.
 	self currentScaleFactor: 1.
-	self maxScaleValue: 3.5.
+	self maxScaleValue: 10.0.
 ]
 
 { #category : #displaying }
@@ -299,7 +299,7 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> zoomIn [
 
-	self currentScaleFactor >= slider sliderMaxScale  ifTrue: [ ^ self ].
+	self currentScaleFactor >= (slider sliderMaxScale-0.05)  ifTrue: [ ^ self ].
 
 	self currentScaleFactor: self currentScaleFactor + scaleLap.
 	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain
