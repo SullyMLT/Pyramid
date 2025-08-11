@@ -113,10 +113,11 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 								  scaleValue := 1 + (self currentBlocSliderTranslation x / 100.0) ]
 							  ifFalse: [
 								  t translateBy: self minBlocMoveSliderLength.
-								  scaleValue := 1 + (self minBlocMoveSliderLength x / 100.0) ] ]
+								  self inform: self minBlocMoveSliderLength asString.
+								  scaleValue := 1 + self sliderMinScale ] ]
 					  ifFalse: [
 						  t translateBy: self maxBlocMoveSliderLength.
-						  scaleValue := 1 + (self maxBlocMoveSliderLength x / 100.0) ].
+						  scaleValue := 1 + self sliderMaxScale ].
 				  blockAction value: scaleValue ].
 			  evt consumed: true ]
 ]
@@ -125,86 +126,97 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 PyramidZoomSlider >> refreshSlider [
 
 	| sliderContainerWidth nbLap cornerRadius |
-	
 	lineSliderWidth := sliderWidth - sliderMinimumValue.
-	sliderContainerWidth := sliderWidth + sliderPaddingWidth.
+	sliderContainerWidth := sliderWidth + sliderPaddingWidth + 50.
 
 	sliderContainer := BlElement new.
-	sliderContainer id: 'zoomSlider';
+	sliderContainer
+		id: 'zoomSlider';
 		background: Color white;
 		size: sliderContainerWidth @ 35;
-		position: 0@0;
+		position: 0 @ 0;
 		zIndex: 1001.
-	sliderContainer  constraintsDo: [ :c |
-			c frame horizontal alignLeft.
-			c frame vertical alignBottom].
+	sliderContainer constraintsDo: [ :c |
+		c frame horizontal alignLeft.
+		c frame vertical alignBottom ].
 
 	lineSlider := BlElement new.
 	lineSlider
 		size: lineSliderWidth @ 2;
-		position: (sliderPaddingWidth/2) @ 9;
+		position: sliderPaddingWidth / 2 @ 9;
 		background: Color black.
 
-	0 to: 8 do: [ :i |
+	0 to: 7 do: [ :i |
 		| e |
 		e := BlElement new.
 		e
 			background: Color gray;
 			size: 1 @ 10;
-			position: ((i * sliderLap) + (sliderPaddingWidth/2)) @ 5.
-			
-		((i * sliderLap)/50) isInteger
-		ifTrue: [ sliderContainer addChild: (BlTextElement new
-													text: (i = 0
-														ifTrue: [ ((sliderMinimumValue) asString,'%') asRopedText ]
-														ifFalse: [((i * 10) asString,'%') asRopedText ]);
-													position: ((i * 10) + (sliderPaddingWidth/6)) @ 15).
-						e background: Color blue;
-						size: 2 @ 10 ].
+			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
+
+		i = 0 ifTrue: [
+			sliderContainer addChild: (BlTextElement new
+					 text: (sliderMinimumValue asString , '%') asRopedText;
+					 position: sliderPaddingWidth / 4 @ 20).
+			e
+				background: Color blue;
+				size: 2 @ 10 ].
+
+		((i + 1) * sliderLap / 50) isInteger ifTrue: [
+			sliderContainer addChild: (BlTextElement new
+					 text: (((i + 1) * 10) asString , '%') asRopedText;
+					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
+			e
+				background: Color blue;
+				size: 2 @ 10 ].
 		sliderContainer addChild: e ].
 
-	nbLap := lineSliderWidth+ sliderMinimumValue / sliderLap.
-	8 to: nbLap-1 do: [ :i |
+	nbLap := lineSliderWidth + sliderMinimumValue / sliderLap.
+	8 to: nbLap - 1 do: [ :i |
 		| e |
 		e := BlElement new.
 		e
 			background: Color gray;
 			size: 1 @ 10;
-			position: ((i * sliderLap) + (sliderPaddingWidth/2)) @ 5.
-			
-		((i+1 * sliderLap)/50) isInteger
-		ifTrue: [ sliderContainer addChild: (BlTextElement new
-													text: ((i+1 * 10) asString,'%') asRopedText;
-													position: ((i * 10) + (sliderPaddingWidth/6)) @ 15).
-						e background: Color blue;
-						size: 2 @ 10 ].
+			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
+
+		((i + 1) * sliderLap / 50) isInteger ifTrue: [
+			sliderContainer addChild: (BlTextElement new
+					 text: (((i + 1) * 10) asString , '%') asRopedText;
+					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
+			e
+				background: Color blue;
+				size: 2 @ 10 ].
 		sliderContainer addChild: e ].
-	
-	cornerRadius := (BlRoundedRectangleGeometry cornerRadii:
-					           (BlCornerRadii new
-						            topLeft: 4;
-						            topRight: 4;
-						            bottomRight: 4;
-						            bottomLeft: 4)).
+
+	cornerRadius := BlRoundedRectangleGeometry cornerRadii:
+		                (BlCornerRadii new
+			                 topLeft: 4;
+			                 topRight: 4;
+			                 bottomRight: 4;
+			                 bottomLeft: 4).
 
 	blocToMove := BlElement new.
 	blocToMove
 		background: Color red;
 		geometry: cornerRadius;
 		size: 6 @ 15;
-		position: ((sliderPaddingWidth/2) + sliderDefaultValue-sliderMinimumValue -3) @ 2.
-			
+		position:
+			sliderPaddingWidth / 2 + sliderDefaultValue - sliderMinimumValue
+			- 3 @ 2.
+
 	sliderContainer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
-			 do: [ :evt | 
-				self dragSlider
-					ifFalse: [ moveEvent := self moveBlocSliderEvent.
-				 		sliderContainer addEventHandler: moveEvent ] ]).
+			 do: [ :evt |
+				 self dragSlider ifFalse: [
+					 moveEvent := self moveBlocSliderEvent.
+					 sliderContainer addEventHandler: moveEvent ] ]).
 
 	sliderContainer addChild: lineSlider.
 	sliderContainer addChild: blocToMove.
-	sliderContainer localTheme: ToRawTheme new.
-	
+
+	sliderContainer inspect.
+
 	^ sliderContainer
 ]
 
