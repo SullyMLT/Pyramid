@@ -163,9 +163,9 @@ PyramidZoomSlider >> refreshSlider [
 				background: Color blue;
 				extent: 2 @ 10 ].
 
-		(i + 1 * sliderLap / 50) isInteger ifTrue: [
+		((i + 1) * sliderLap / 50) isInteger ifTrue: [
 			sliderContainer addChild: (BlTextElement new
-					 text: ((i + 1 * 10) asString , '%') asRopedText;
+					 text: (((i + 1) * 10) asString , '%') asRopedText;
 					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
 			e
 				background: Color blue;
@@ -181,9 +181,9 @@ PyramidZoomSlider >> refreshSlider [
 			extent: 1 @ 10;
 			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
 
-		(i + 1 * sliderLap / 50) isInteger ifTrue: [
+		((i + 1) * sliderLap / 50) isInteger ifTrue: [
 			sliderContainer addChild: (BlTextElement new
-					 text: ((i + 1 * 10) asString , '%') asRopedText;
+					 text: (((i + 1) * 10) asString , '%') asRopedText;
 					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
 			e
 				background: Color blue;
