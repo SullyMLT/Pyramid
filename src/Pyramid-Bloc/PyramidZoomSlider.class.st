@@ -17,7 +17,8 @@ Class {
 		'lineSliderWidth',
 		'sliderWidth',
 		'dragSlider',
-		'sliderPaddingWidth'
+		'sliderPaddingWidth',
+		'sliderMinimumValue'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -67,7 +68,8 @@ PyramidZoomSlider >> initialize [
 	self dragSlider: false.
 	
 	sliderWidth := 250.
-	sliderDefaultValue := 50.
+	sliderDefaultValue := 100.
+	sliderMinimumValue := 10.
 	sliderPaddingWidth := 40.
 	sliderLap := 10.
 
@@ -124,8 +126,8 @@ PyramidZoomSlider >> refreshSlider [
 
 	| sliderContainerWidth nbLap cornerRadius |
 	
-	lineSliderWidth := sliderWidth - sliderDefaultValue.
-	sliderContainerWidth := sliderWidth + sliderPaddingWidth - sliderDefaultValue.
+	lineSliderWidth := sliderWidth - sliderMinimumValue.
+	sliderContainerWidth := sliderWidth + sliderPaddingWidth.
 
 	sliderContainer := BlElement new.
 	sliderContainer id: 'zoomSlider';
@@ -143,8 +145,7 @@ PyramidZoomSlider >> refreshSlider [
 		position: (sliderPaddingWidth/2) @ 9;
 		background: Color black.
 
-	nbLap := lineSliderWidth / sliderLap.
-	0 to: nbLap do: [ :i |
+	0 to: 8 do: [ :i |
 		| e |
 		e := BlElement new.
 		e
@@ -153,14 +154,30 @@ PyramidZoomSlider >> refreshSlider [
 			position: ((i * sliderLap) + (sliderPaddingWidth/2)) @ 5.
 			
 		((i * sliderLap)/50) isInteger
-		ifTrue: [ sliderContainer addChild: (ToLabel new
+		ifTrue: [ sliderContainer addChild: (BlTextElement new
 													text: (i = 0
-														ifTrue: [ (sliderDefaultValue) asString,'%']
-														ifFalse: [(i * sliderLap + sliderDefaultValue) asString,'%']);
-													position: ((i * sliderLap) + (sliderPaddingWidth/6)) @ 15).
+														ifTrue: [ ((sliderMinimumValue) asString,'%') asRopedText ]
+														ifFalse: [((i * 10) asString,'%') asRopedText ]);
+													position: ((i * 10) + (sliderPaddingWidth/6)) @ 15).
 						e background: Color blue;
 						size: 2 @ 10 ].
-					
+		sliderContainer addChild: e ].
+
+	nbLap := lineSliderWidth+ sliderMinimumValue / sliderLap.
+	8 to: nbLap-1 do: [ :i |
+		| e |
+		e := BlElement new.
+		e
+			background: Color gray;
+			size: 1 @ 10;
+			position: ((i * sliderLap) + (sliderPaddingWidth/2)) @ 5.
+			
+		((i+1 * sliderLap)/50) isInteger
+		ifTrue: [ sliderContainer addChild: (BlTextElement new
+													text: ((i+1 * 10) asString,'%') asRopedText;
+													position: ((i * 10) + (sliderPaddingWidth/6)) @ 15).
+						e background: Color blue;
+						size: 2 @ 10 ].
 		sliderContainer addChild: e ].
 	
 	cornerRadius := (BlRoundedRectangleGeometry cornerRadii:
@@ -175,7 +192,7 @@ PyramidZoomSlider >> refreshSlider [
 		background: Color red;
 		geometry: cornerRadius;
 		size: 6 @ 15;
-		position: ((sliderPaddingWidth/2) + sliderDefaultValue -3) @ 2.
+		position: ((sliderPaddingWidth/2) + sliderDefaultValue-sliderMinimumValue -3) @ 2.
 			
 	sliderContainer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
@@ -212,7 +229,7 @@ PyramidZoomSlider >> sliderMaxScale [
 { #category : #'as yet unclassified' }
 PyramidZoomSlider >> sliderMinScale [
 
-	^ ((sliderDefaultValue)/100)
+	^ ((sliderMinimumValue)/100)
 ]
 
 { #category : #enumerating }
