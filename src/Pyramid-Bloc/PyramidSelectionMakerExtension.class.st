@@ -102,11 +102,11 @@ PyramidSelectionMakerExtension >> dragStart: anEvent [
 
 	self isDragging: true.
 	self dragOrigin: anEvent position.
-	
+
 	self isOnlyCtrlKeyPressed ifTrue: [ self isDragging: false ].
 
 	self selectionGhost
-		size: 0 @ 0;
+		extent: 0 @ 0;
 		position: self dragOrigin;
 		visibility: BlVisibility visible
 ]

@@ -85,7 +85,7 @@ PyramidZoomSlider >> maxBlocMoveSliderLength [
 { #category : #accessing }
 PyramidZoomSlider >> minBlocMoveSliderLength [
 
-	^ ((sliderPaddingWidth/2) - blocToMove position x / sliderLap) rounded * sliderLap @ 0
+	^ (((sliderPaddingWidth/2) - blocToMove position x) / sliderLap) rounded * sliderLap @ 0
 ]
 
 { #category : #'as yet unclassified' }
@@ -107,17 +107,18 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 				  Interval if less than slider max size (line) and if greater than minimum size"
 				  self currentBlocSliderTranslation x < (lineSliderWidth - sliderDefaultValue + 1)
 					  ifTrue: [
-						  self currentBlocSliderTranslation x > (sliderDefaultValue + 1 * -1)
+						  self currentBlocSliderTranslation x > ((sliderDefaultValue - sliderMinimumValue + 1) * -1)
 							  ifTrue: [
+								
 								  t translateBy: self currentBlocSliderTranslation.
-								  scaleValue := 1 + (self currentBlocSliderTranslation x / 100.0) ]
+								  scaleValue := 1 + (self currentBlocSliderTranslation x / 100.0).
+								  scaleValue < 0.1 ifTrue: [ scaleValue := self sliderMinScale ] ]
 							  ifFalse: [
 								  t translateBy: self minBlocMoveSliderLength.
-								  self inform: self minBlocMoveSliderLength asString.
-								  scaleValue := 1 + self sliderMinScale ] ]
+								  scaleValue := self sliderMinScale ] ]
 					  ifFalse: [
 						  t translateBy: self maxBlocMoveSliderLength.
-						  scaleValue := 1 + self sliderMaxScale ].
+						  scaleValue := self sliderMaxScale ].
 				  blockAction value: scaleValue ].
 			  evt consumed: true ]
 ]
@@ -133,7 +134,7 @@ PyramidZoomSlider >> refreshSlider [
 	sliderContainer
 		id: 'zoomSlider';
 		background: Color white;
-		size: sliderContainerWidth @ 35;
+		extent: sliderContainerWidth @ 35;
 		position: 0 @ 0;
 		zIndex: 1001.
 	sliderContainer constraintsDo: [ :c |
@@ -142,7 +143,7 @@ PyramidZoomSlider >> refreshSlider [
 
 	lineSlider := BlElement new.
 	lineSlider
-		size: lineSliderWidth @ 2;
+		extent: lineSliderWidth @ 2;
 		position: sliderPaddingWidth / 2 @ 9;
 		background: Color black.
 
@@ -151,7 +152,7 @@ PyramidZoomSlider >> refreshSlider [
 		e := BlElement new.
 		e
 			background: Color gray;
-			size: 1 @ 10;
+			extent: 1 @ 10;
 			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
 
 		i = 0 ifTrue: [
@@ -160,34 +161,34 @@ PyramidZoomSlider >> refreshSlider [
 					 position: sliderPaddingWidth / 4 @ 20).
 			e
 				background: Color blue;
-				size: 2 @ 10 ].
+				extent: 2 @ 10 ].
 
-		((i + 1) * sliderLap / 50) isInteger ifTrue: [
+		(i + 1 * sliderLap / 50) isInteger ifTrue: [
 			sliderContainer addChild: (BlTextElement new
-					 text: (((i + 1) * 10) asString , '%') asRopedText;
+					 text: ((i + 1 * 10) asString , '%') asRopedText;
 					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
 			e
 				background: Color blue;
-				size: 2 @ 10 ].
+				extent: 2 @ 10 ].
 		sliderContainer addChild: e ].
 
-	nbLap := lineSliderWidth + sliderMinimumValue / sliderLap.
-	8 to: nbLap - 1 do: [ :i |
+	nbLap := lineSliderWidth / sliderLap. "+ sliderMinimumValue"
+	8 to: nbLap do: [ :i |
 		| e |
 		e := BlElement new.
 		e
 			background: Color gray;
-			size: 1 @ 10;
+			extent: 1 @ 10;
 			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
 
-		((i + 1) * sliderLap / 50) isInteger ifTrue: [
+		(i + 1 * sliderLap / 50) isInteger ifTrue: [
 			sliderContainer addChild: (BlTextElement new
-					 text: (((i + 1) * 10) asString , '%') asRopedText;
+					 text: ((i + 1 * 10) asString , '%') asRopedText;
 					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
 			e
 				background: Color blue;
-				size: 2 @ 10 ].
-		sliderContainer addChild: e ].
+				extent: 2 @ 10 ].
+		sliderContainer addChild: e ]. "- 1"
 
 	cornerRadius := BlRoundedRectangleGeometry cornerRadii:
 		                (BlCornerRadii new
@@ -200,7 +201,7 @@ PyramidZoomSlider >> refreshSlider [
 	blocToMove
 		background: Color red;
 		geometry: cornerRadius;
-		size: 6 @ 15;
+		extent: 6 @ 15;
 		position:
 			sliderPaddingWidth / 2 + sliderDefaultValue - sliderMinimumValue
 			- 3 @ 2.
@@ -214,8 +215,6 @@ PyramidZoomSlider >> refreshSlider [
 
 	sliderContainer addChild: lineSlider.
 	sliderContainer addChild: blocToMove.
-
-	sliderContainer inspect.
 
 	^ sliderContainer
 ]
@@ -240,7 +239,8 @@ PyramidZoomSlider >> sliderMaxScale [
 
 { #category : #'as yet unclassified' }
 PyramidZoomSlider >> sliderMinScale [
-
+	
+	sliderMinimumValue <= 10 ifTrue: [ ^ 0.10000000000000003 ].
 	^ ((sliderMinimumValue)/100)
 ]
 

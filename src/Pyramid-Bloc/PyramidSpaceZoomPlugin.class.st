@@ -30,9 +30,10 @@ PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement [
 	pyramidPositionExtension scaleFactor: self currentScaleFactor.
 	
 	self refreshScaledZoom.
-	
+
 	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
 											t translateBy: self scaledZoom ].
+										
 	slider blocToMoveZoomPosition: self currentScaleFactor.
 ]
 
@@ -47,6 +48,7 @@ PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement scaleValue: aValue
 
 	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
 											t translateBy: self scaledZoom ].
+										
 	slider blocToMoveZoomPosition: self currentScaleFactor.
 ]
 
@@ -234,11 +236,11 @@ PyramidSpaceZoomPlugin >> pluginFromPyramid: aPyramidEditor [
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> refreshScaledZoom [
 
-	scaledZoom := pyramidWheelTransformExtension elementAtMain size x
-						                   * (self currentScaleFactor - 1 / 2)
-						                   @
-						                   (pyramidWheelTransformExtension elementAtMain size y
-						                    * (self currentScaleFactor - 1 / 2)).
+	scaledZoom := pyramidWheelTransformExtension elementAtMain extent x
+	              * (self currentScaleFactor - 1 / 2)
+	              @
+		              (pyramidWheelTransformExtension elementAtMain extent y
+		               * (self currentScaleFactor - 1 / 2))
 ]
 
 { #category : #accessing }

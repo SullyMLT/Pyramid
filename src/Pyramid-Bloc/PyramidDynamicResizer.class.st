@@ -30,7 +30,7 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 	bottomAndRightResizer
 		background: resizeElementColor;
 		id: 'bottomAndRightResizer';
-		size: resizeElementSize;
+		extent: resizeElementSize;
 		zIndex: 1005.
 	bottomAndRightResizer constraintsDo: [ :c |
 		c frame horizontal alignRight.
@@ -58,7 +58,7 @@ PyramidDynamicResizer >> createBottomResizerElement: aBlElement [
 	bottomResizer
 		background: resizeElementColor;
 		id: 'bottomResizer';
-		size: resizeElementSize;
+		extent: resizeElementSize;
 		zIndex: 1005.
 	bottomResizer constraintsDo: [ :c |
 		c frame horizontal alignCenter.
@@ -86,7 +86,7 @@ PyramidDynamicResizer >> createRightResizerElement: aBlElement [
 	rightResizer
 		background: resizeElementColor;
 		id: 'rightResizer';
-		size: resizeElementSize;
+		extent: resizeElementSize;
 		zIndex: 1005.
 	rightResizer constraintsDo: [ :c |
 		c frame horizontal alignRight.
