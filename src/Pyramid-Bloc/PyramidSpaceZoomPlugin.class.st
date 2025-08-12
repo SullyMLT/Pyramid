@@ -51,20 +51,7 @@ PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement scaleValue: aValue
 
 	self refreshScaledZoom.
 
-	sizeElementExtent = ((pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement) extent)
-	ifFalse: [ sizeElementExtent := ((pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement) extent).
-				pixelGridEnable := false.
-				(pyramidSelectionWidgetExtension elementAtMain childWithId:
-					 #MainExtension_sizeElement) removeChildWithId: #pixelGrid.
-					self createPixelGrid. self inform: 'pas meme taille' ].
-				
-	((self currentScaleFactor) roundTo:0.1) >= 5.5
-		ifTrue: [ self createPixelGrid ]
-		ifFalse: [
-			pixelGridEnable ifTrue: [
-				pixelGridEnable := false.
-				(pyramidSelectionWidgetExtension elementAtMain childWithId:
-					 #MainExtension_sizeElement) removeChildWithId: #pixelGrid ] ].
+	self installOnPixelGrid.
 
 	aBlElement transformDo: [ :t |
 		t scaleBy: self currentScaleFactor.
@@ -124,7 +111,6 @@ PyramidSpaceZoomPlugin >> createPixelGrid [
 			pixelElement transformDo: [ :t | t scaleBy: 0.1 ].
 			pixelElement position: x * 200 @ (y * 200) - 900.
 			pixelElement clipChildren: false.
-			pixelElement inspect.
 			pixelGrid addChild: pixelElement ] ].
 	
 	sizeElement addChild: pixelGrid.
@@ -229,6 +215,25 @@ PyramidSpaceZoomPlugin >> initialize [
 	
 	imagePixel := self class imagePixelGrid2000x2000.
 	pixelGridEnable := false.
+]
+
+{ #category : #'as yet unclassified' }
+PyramidSpaceZoomPlugin >> installOnPixelGrid [
+
+	sizeElementExtent = ((pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement) extent)
+	ifFalse: [ sizeElementExtent := ((pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement) extent).
+				pixelGridEnable := false.
+				(pyramidSelectionWidgetExtension elementAtMain childWithId:
+					 #MainExtension_sizeElement) removeChildWithId: #pixelGrid.
+					self createPixelGrid ].
+				
+	((self currentScaleFactor) roundTo:0.1) >= 5.5
+		ifTrue: [ self createPixelGrid ]
+		ifFalse: [
+			pixelGridEnable ifTrue: [
+				pixelGridEnable := false.
+				(pyramidSelectionWidgetExtension elementAtMain childWithId:
+					 #MainExtension_sizeElement) removeChildWithId: #pixelGrid ] ]
 ]
 
 { #category : #displaying }
