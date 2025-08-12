@@ -128,7 +128,7 @@ PyramidZoomSlider >> refreshSlider [
 
 	| sliderContainerWidth nbLap cornerRadius |
 	lineSliderWidth := sliderWidth - sliderMinimumValue.
-	sliderContainerWidth := sliderWidth + sliderPaddingWidth + 50.
+	sliderContainerWidth := sliderWidth + sliderPaddingWidth "+ 50".
 
 	sliderContainer := BlElement new.
 	sliderContainer

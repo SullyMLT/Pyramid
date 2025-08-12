@@ -82,7 +82,7 @@ PyramidSelectionMakerExtension >> dragEvent: anEvent [
 
 	self selectionGhost
 		position: xmin @ ymin;
-		size: (anEvent position - self dragOrigin) abs
+		extent: (anEvent position - self dragOrigin) abs
 ]
 
 { #category : #accessing }
