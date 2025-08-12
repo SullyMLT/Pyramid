@@ -8,7 +8,7 @@ Class {
 		'themeElementSelector',
 		'treeTableStampPresenter'
 	],
-	#category : #'Pyramid-Toplo-EXPERIMENTAL-plugin-theme-management'
+	#category : #'Pyramid-Toplo-plugin-theme-management'
 }
 
 { #category : #layout }

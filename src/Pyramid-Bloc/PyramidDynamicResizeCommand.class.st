@@ -20,7 +20,7 @@ PyramidDynamicResizeCommand >> commandInverse [
 { #category : #'as yet unclassified' }
 PyramidDynamicResizeCommand >> getValueFor: anObject [
 
-	^ anObject size
+	^ anObject extent
 ]
 
 { #category : #'as yet unclassified' }

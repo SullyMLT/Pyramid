@@ -19,7 +19,9 @@ Class {
 		'slider',
 		'scaledZoom',
 		'maxScaleValue',
-		'imagePixel'
+		'imagePixel',
+		'pixelGridEnable',
+		'sizeElementExtent'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -41,32 +43,34 @@ PyramidSpaceZoomPlugin class >> imagePixelGrid4000x4000 [
 ]
 
 { #category : #'as yet unclassified' }
-PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement [
-	
-	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
-	pyramidPositionExtension scaleFactor: self currentScaleFactor.
-	
-	self refreshScaledZoom.
-
-	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
-											t translateBy: self scaledZoom ].
-										
-	slider blocToMoveZoomPosition: self currentScaleFactor.
-]
-
-{ #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement scaleValue: aValue [
-	
+
 	self currentScaleFactor: aValue.
 	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
 	pyramidPositionExtension scaleFactor: self currentScaleFactor.
-	
+
 	self refreshScaledZoom.
 
-	aBlElement transformDo: [ :t | t scaleBy: self currentScaleFactor.
-											t translateBy: self scaledZoom ].
-										
-	slider blocToMoveZoomPosition: self currentScaleFactor.
+	sizeElementExtent = ((pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement) extent)
+	ifFalse: [ sizeElementExtent := ((pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement) extent).
+				pixelGridEnable := false.
+				(pyramidSelectionWidgetExtension elementAtMain childWithId:
+					 #MainExtension_sizeElement) removeChildWithId: #pixelGrid.
+					self createPixelGrid. self inform: 'pas meme taille' ].
+				
+	((self currentScaleFactor) roundTo:0.1) >= 5.5
+		ifTrue: [ self createPixelGrid ]
+		ifFalse: [
+			pixelGridEnable ifTrue: [
+				pixelGridEnable := false.
+				(pyramidSelectionWidgetExtension elementAtMain childWithId:
+					 #MainExtension_sizeElement) removeChildWithId: #pixelGrid ] ].
+
+	aBlElement transformDo: [ :t |
+		t scaleBy: self currentScaleFactor.
+		t translateBy: self scaledZoom ].
+
+	slider blocToMoveZoomPosition: self currentScaleFactor
 ]
 
 { #category : #connecting }
@@ -78,17 +82,27 @@ PyramidSpaceZoomPlugin >> connectOn: aPyramidEditor [
 	
 	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
 	
-	self installOnZoomSpace
+	self installOnZoomSpace.
+	
+	sizeElementExtent := (pyramidSelectionWidgetExtension elementAtMain childWithId:
+					 #MainExtension_sizeElement) extent.
 ]
 
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> createPixelGrid [
 
-	| nbWidthPixel aWidth realNbWidthPixel nbHeightPixel aHeight realNbHeightPixel pixelGrid |
+	| nbWidthPixel aWidth realNbWidthPixel nbHeightPixel aHeight realNbHeightPixel pixelGrid sizeElement |
+	
+	pixelGridEnable ifTrue: [ ^ self ].
+	
+	pixelGridEnable := true.
+	
+	sizeElement := (pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement).
+	
+	aWidth := sizeElement extent x.
+	aHeight := sizeElement extent y.
+	
 	nbWidthPixel := aWidth / 200.
-	
-	(pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtention_sizeElement) removeChildWithId: #pixelGrid.
-	
 	realNbWidthPixel := nbWidthPixel rounded < nbWidthPixel
 		                    ifTrue: [ nbWidthPixel rounded + 1 ]
 		                    ifFalse: [ nbWidthPixel rounded ].
@@ -110,7 +124,10 @@ PyramidSpaceZoomPlugin >> createPixelGrid [
 			pixelElement transformDo: [ :t | t scaleBy: 0.1 ].
 			pixelElement position: x * 200 @ (y * 200) - 900.
 			pixelElement clipChildren: false.
+			pixelElement inspect.
 			pixelGrid addChild: pixelElement ] ].
+	
+	sizeElement addChild: pixelGrid.
 ]
 
 { #category : #'as yet unclassified' }
@@ -209,6 +226,9 @@ PyramidSpaceZoomPlugin >> initialize [
 	self scaleLap: 0.1.
 	self currentScaleFactor: 1.
 	self maxScaleValue: 10.0.
+	
+	imagePixel := self class imagePixelGrid2000x2000.
+	pixelGridEnable := false.
 ]
 
 { #category : #displaying }
@@ -350,17 +370,23 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> zoomIn [
 
-	self currentScaleFactor >= (slider sliderMaxScale-0.05)  ifTrue: [ ^ self ].
+	self currentScaleFactor >= (slider sliderMaxScale - 0.05) ifTrue: [
+		^ self ].
 
-	self currentScaleFactor: self currentScaleFactor + scaleLap.
-	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain
+	self
+		EditScaleDisplayElement:
+		pyramidSelectionWidgetExtension elementAtMain
+		scaleValue: self currentScaleFactor + scaleLap
 ]
 
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> zoomOut [
 
-	self currentScaleFactor <= (scaleLap + slider sliderMinScale) ifTrue: [ ^ self ].
+	self currentScaleFactor <= (scaleLap + slider sliderMinScale)
+		ifTrue: [ ^ self ].
 
-	self currentScaleFactor: self currentScaleFactor - scaleLap.
-	self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain
+	self
+		EditScaleDisplayElement:
+		pyramidSelectionWidgetExtension elementAtMain
+		scaleValue: self currentScaleFactor - scaleLap
 ]
