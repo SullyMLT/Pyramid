@@ -3,7 +3,7 @@ This slider is used by PyramidSpaceZoomPlugin.
 "
 Class {
 	#name : #PyramidZoomSlider,
-	#superclass : #Object,
+	#superclass : #PyramidSpaceZoomPlugin,
 	#instVars : [
 		'sliderContainer',
 		'lineSlider',
