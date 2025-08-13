@@ -126,9 +126,11 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 { #category : #'as yet unclassified' }
 PyramidZoomSlider >> refreshSlider [
 
-	| sliderContainerWidth nbLap cornerRadius |
+	| sliderContainerWidth nbLap cornerRadius nbLapUnderDefaultValue |
+	nbLapUnderDefaultValue := sliderDefaultValue - sliderMinimumValue
+	                          / 10.
 	lineSliderWidth := sliderWidth - sliderMinimumValue.
-	sliderContainerWidth := sliderWidth + sliderPaddingWidth "+ 50".
+	sliderContainerWidth := sliderWidth + sliderPaddingWidth.
 
 	sliderContainer := BlElement new.
 	sliderContainer
@@ -147,7 +149,7 @@ PyramidZoomSlider >> refreshSlider [
 		position: sliderPaddingWidth / 2 @ 9;
 		background: Color black.
 
-	0 to: 7 do: [ :i |
+	0 to: nbLapUnderDefaultValue - 1 do: [ :i |
 		| e |
 		e := BlElement new.
 		e
@@ -163,17 +165,19 @@ PyramidZoomSlider >> refreshSlider [
 				background: Color blue;
 				extent: 2 @ 10 ].
 
-		((i + 1) * sliderLap / 50) isInteger ifTrue: [
+		(i + 1 * sliderLap / 50) isInteger ifTrue: [
 			sliderContainer addChild: (BlTextElement new
-					 text: (((i + 1) * 10) asString , '%') asRopedText;
-					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
+					 text:
+						 ((i * sliderLap + sliderMinimumValue) asString , '%')
+							 asRopedText;
+					 position: i * sliderLap + (sliderPaddingWidth / 4) @ 20). "(((i + 1) * sliderLap)"
 			e
 				background: Color blue;
 				extent: 2 @ 10 ].
 		sliderContainer addChild: e ].
 
-	nbLap := lineSliderWidth / sliderLap. "+ sliderMinimumValue"
-	8 to: nbLap do: [ :i |
+	nbLap := lineSliderWidth / sliderLap.
+	nbLapUnderDefaultValue to: nbLap do: [ :i |
 		| e |
 		e := BlElement new.
 		e
@@ -181,14 +185,27 @@ PyramidZoomSlider >> refreshSlider [
 			extent: 1 @ 10;
 			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
 
-		((i + 1) * sliderLap / 50) isInteger ifTrue: [
-			sliderContainer addChild: (BlTextElement new
-					 text: (((i + 1) * 10) asString , '%') asRopedText;
-					 position: i * 10 + (sliderPaddingWidth / 4) @ 20).
-			e
-				background: Color blue;
-				extent: 2 @ 10 ].
-		sliderContainer addChild: e ]. "- 1"
+		i = nbLap
+			ifTrue: [
+				sliderContainer addChild: (BlTextElement new
+						 text:
+							 ((i * sliderLap + sliderMinimumValue) asString , '%')
+								 asRopedText;
+						 position: i * sliderLap + (sliderPaddingWidth / 4) @ 20).
+				e
+					background: Color blue;
+					extent: 2 @ 10 ]
+			ifFalse: [
+				(i + 1 * sliderLap / 50) isInteger ifTrue: [
+					sliderContainer addChild: (BlTextElement new
+							 text:
+								 ((i * sliderLap + sliderMinimumValue) asString , '%')
+									 asRopedText;
+							 position: i * sliderLap + (sliderPaddingWidth / 4) @ 20).
+					e
+						background: Color blue;
+						extent: 2 @ 10 ] ].
+		sliderContainer addChild: e ].
 
 	cornerRadius := BlRoundedRectangleGeometry cornerRadii:
 		                (BlCornerRadii new
