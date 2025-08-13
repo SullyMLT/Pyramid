@@ -10,7 +10,6 @@ Class {
 	#classTraits : 'TPyramidPlugin classTrait',
 	#instVars : [
 		'currentScaleFactor',
-		'pyramidWheelTransformExtension',
 		'display',
 		'pyramidSelectionWidgetExtension',
 		'scaleLap',
@@ -21,7 +20,8 @@ Class {
 		'maxScaleValue',
 		'imagePixel',
 		'pixelGridEnable',
-		'sizeElementExtent'
+		'sizeElementExtent',
+		'pyramidMainExtension'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -56,19 +56,20 @@ PyramidSpaceZoomPlugin >> EditScaleDisplayElement: aBlElement scaleValue: aValue
 PyramidSpaceZoomPlugin >> connectOn: aPyramidEditor [
 
 	self pluginFromPyramid: aPyramidEditor.
-	
+
 	pyramidSelectionWidgetExtension ifNil: [ ^ self ].
-	
+
 	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
-	
+
 	self installOnZoomSpace.
-	
-	sizeElementExtent := (pyramidSelectionWidgetExtension elementAtMain childWithId:
-					 #MainExtension_sizeElement) extent.
+
+	sizeElementExtent := (pyramidSelectionWidgetExtension elementAtMain
+		                      childWithId: #MainExtension_sizeElement)
+		                     extent
 ]
 
 { #category : #'as yet unclassified' }
-PyramidSpaceZoomPlugin >> createPixelGrid [
+PyramidSpaceZoomPlugin >> createPixelGrid: aPoint [
 
 	| nbWidthPixel aWidth realNbWidthPixel nbHeightPixel aHeight realNbHeightPixel pixelGrid sizeElement |
 	
@@ -77,9 +78,9 @@ PyramidSpaceZoomPlugin >> createPixelGrid [
 	pixelGridEnable := true.
 	
 	sizeElement := (pyramidSelectionWidgetExtension elementAtMain childWithId: #MainExtension_sizeElement).
-	
-	aWidth := sizeElement extent x.
-	aHeight := sizeElement extent y.
+
+	aWidth := aPoint x.
+	aHeight := aPoint y.
 	
 	nbWidthPixel := aWidth / 200.
 	realNbWidthPixel := nbWidthPixel rounded < nbWidthPixel
@@ -215,31 +216,28 @@ PyramidSpaceZoomPlugin >> installOnPixelGrid [
 	| sizeElement |
 	sizeElement := pyramidSelectionWidgetExtension elementAtMain
 		               childWithId: #MainExtension_sizeElement.
-
-	sizeElementExtent = sizeElement extent ifFalse: [
-		sizeElementExtent := sizeElement extent.
-		pixelGridEnable := false.
-		sizeElement removeChildWithId: #pixelGrid.
-		self createPixelGrid ].
-
+	
+	sizeElementExtent := sizeElement extent.
+	
 	(self currentScaleFactor roundTo: 0.1) >= 5.5
-		ifTrue: [ self createPixelGrid ]
+		ifTrue: [ self createPixelGrid: sizeElementExtent ]
 		ifFalse: [
 			pixelGridEnable ifTrue: [
 				pixelGridEnable := false.
-				sizeElement removeChildWithId: #pixelGrid ] ]
+				(pyramidSelectionWidgetExtension elementAtMain childWithId:
+					 #MainExtension_sizeElement) removeChildWithId: #pixelGrid ] ]
 ]
 
 { #category : #displaying }
 PyramidSpaceZoomPlugin >> installOnZoomSpace [
 
-	pyramidWheelTransformExtension elementAtEvents addEventHandler:
+	pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
 		(BlEventHandler
 			 on: BlMouseWheelEvent
 			 do: [ :evt |
 				 | moveTo |
 				 moveTo := nil.
-				 pyramidWheelTransformExtension isOnlyCtrlKeyPressed ifTrue: [
+				 pyramidSelectionWidgetExtension isOnlyCtrlKeyPressed ifTrue: [
 					 moveTo := evt vector asPoint leftRotated ].
 				 moveTo ifNotNil: [
 					 moveTo = (5 @ 0) asPoint
@@ -262,24 +260,13 @@ PyramidSpaceZoomPlugin >> maxScaleValue: aScaleValue [
 { #category : #'accessing - classes' }
 PyramidSpaceZoomPlugin >> pluginFromPyramid: aPyramidEditor [
 
-	| listOfSpaceExtension pyramidWheelTransformExtensionSet  pyramidSelectionWidgetExtensionSet pyramidPositionExtensionSet listOfPlugins pluginSorted |
+	| listOfSpaceExtension pyramidSelectionWidgetExtensionSet pyramidPositionExtensionSet listOfPlugins pluginSorted pyramidMainExtensionSet |
 	
 	listOfPlugins := aPyramidEditor plugins.
 	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpacePlugin ].
 	pluginSorted size = 1
 	ifFalse: [^ self].
 	spacePlugin := pluginSorted asArray first.
-
-	listOfSpaceExtension := spacePlugin builder extensions.
-
-	pyramidWheelTransformExtensionSet := listOfSpaceExtension select: [
-		                                     :extensions |
-		                                     extensions isKindOf:
-			                                     PyramidWheelTransformExtension ].
-	pyramidWheelTransformExtensionSet size = 1 ifFalse: [ ^ self ].
-
-	pyramidWheelTransformExtension := pyramidWheelTransformExtensionSet
-		                                  asArray first.
 		
 	listOfSpaceExtension := spacePlugin builder extensions.
 
@@ -288,7 +275,6 @@ PyramidSpaceZoomPlugin >> pluginFromPyramid: aPyramidEditor [
 		                                      extensions isKindOf:
 			                                      PyramidSelectionWidgetExtension ].
 	pyramidSelectionWidgetExtensionSet size = 1 ifFalse: [ ^ self ].
-
 	pyramidSelectionWidgetExtension := pyramidSelectionWidgetExtensionSet
 		                                   asArray first.
 
@@ -297,17 +283,43 @@ PyramidSpaceZoomPlugin >> pluginFromPyramid: aPyramidEditor [
 		                               extensions isKindOf:
 			                               PyramidPositionExtension ].
 	pyramidPositionExtensionSet size = 1 ifFalse: [ ^ self ].
+	pyramidPositionExtension := pyramidPositionExtensionSet asArray first.
+	
+	pyramidMainExtensionSet := listOfSpaceExtension select: [
+		                               :extensions |
+		                               extensions isKindOf:
+			                               PyramidMainExtension ].
+	pyramidMainExtensionSet size = 1 ifFalse: [ ^ self ].
 
-	pyramidPositionExtension := pyramidPositionExtensionSet asArray first
+	pyramidMainExtension := pyramidMainExtensionSet asArray first
+]
+
+{ #category : #'as yet unclassified' }
+PyramidSpaceZoomPlugin >> refreshPixelGrid: aPoint [
+
+	| sizeElement |
+	sizeElement := pyramidSelectionWidgetExtension elementAtMain
+		               childWithId: #MainExtension_sizeElement.
+	
+	pixelGridEnable ifFalse: [ ^ self ].
+
+	(sizeElementExtent = aPoint) ifTrue: [ ^ self ].
+	sizeElementExtent := aPoint.
+
+	pixelGridEnable := false.
+	sizeElement removeChildWithId: #pixelGrid.
+	
+	(self currentScaleFactor roundTo: 0.1) >= 5.5
+		ifTrue: [ self createPixelGrid: aPoint ]
 ]
 
 { #category : #'as yet unclassified' }
 PyramidSpaceZoomPlugin >> refreshScaledZoom [
 
-	scaledZoom := pyramidWheelTransformExtension elementAtMain extent x
+	scaledZoom := pyramidSelectionWidgetExtension elementAtMain extent x
 	              * (self currentScaleFactor - 1 / 2)
 	              @
-		              (pyramidWheelTransformExtension elementAtMain extent y
+		              (pyramidSelectionWidgetExtension elementAtMain extent y
 		               * (self currentScaleFactor - 1 / 2))
 ]
 
@@ -344,17 +356,17 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 	aUIElement layout horizontalAlignment:
 		BlElementAlignment horizontal start.
 		
-	pyramidWheelTransformExtension ifNil: [ ^ self ].
+	pyramidSelectionWidgetExtension ifNil: [ ^ self ].
 
-	position := pyramidWheelTransformExtension elementAtDisplaysAddons
+	position := pyramidSelectionWidgetExtension elementAtDisplaysAddons
 		            childWithId: 'position'.
 
-	pyramidWheelTransformExtension elementAtDisplaysAddons removeChild:
+	pyramidSelectionWidgetExtension elementAtDisplaysAddons removeChild:
 		position.
 		
-	pyramidWheelTransformExtension elementAtDisplaysAddons constraints
+	pyramidSelectionWidgetExtension elementAtDisplaysAddons constraints
 		horizontal matchParent.
-	pyramidWheelTransformExtension elementAtDisplaysAddons
+	pyramidSelectionWidgetExtension elementAtDisplaysAddons
 		height: 1;
 		zIndex: 1001.
 
@@ -362,8 +374,13 @@ PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 	aUIElement addChild: self defaultScaleButton.
 	aUIElement addChild: position.
 
-	pyramidWheelTransformExtension elementAtDisplaysAddons addChild:
-		aUIElement
+	pyramidSelectionWidgetExtension elementAtDisplaysAddons addChild:
+		aUIElement.
+		
+	pyramidMainExtension workplacePropertiesView
+		whenWorkplaceValuesChangedDo: [ :point |
+			pyramidMainExtension extent: point.
+			self refreshPixelGrid: point ]
 ]
 
 { #category : #'as yet unclassified' }
