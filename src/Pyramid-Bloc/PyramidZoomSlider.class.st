@@ -174,7 +174,7 @@ PyramidZoomSlider >> refreshSlider [
 		extent: lineSliderWidth @ 2;
 		position: sliderPaddingWidth / 2 @ 9;
 		background: Color black.
-
+	
 	0 to: nbLapUnderDefaultValue - 1 do: [ :i |
 		| e |
 		e := BlElement new.
@@ -191,7 +191,7 @@ PyramidZoomSlider >> refreshSlider [
 				background: Color blue;
 				extent: 2 @ 10 ].
 
-		(i + 1 * sliderLap / 50) isInteger ifTrue: [
+		((i + 1) * sliderLap / 50) isInteger ifTrue: [
 			sliderContainer addChild: (self pourcentTextElement: i).
 			e
 				background: Color blue;
@@ -214,7 +214,7 @@ PyramidZoomSlider >> refreshSlider [
 					background: Color blue;
 					extent: 2 @ 10 ]
 			ifFalse: [
-				(i + 1 * sliderLap / 50) isInteger ifTrue: [
+				((i + 1) * sliderLap / 50) isInteger ifTrue: [
 					sliderContainer addChild: (self pourcentTextElement: i).
 					e
 						background: Color blue;
@@ -265,6 +265,12 @@ PyramidZoomSlider >> scaledZoomValue: aScale [
 PyramidZoomSlider >> sliderLapScale [
 
 	^ (sliderLap/100.0)
+]
+
+{ #category : #accessing }
+PyramidZoomSlider >> sliderLapScale: aScaleValue [
+
+	sliderLap := (aScaleValue*100)rounded.
 ]
 
 { #category : #'as yet unclassified' }

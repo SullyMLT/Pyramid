@@ -117,7 +117,7 @@ PyramidSpaceZoomPlugin >> createZoomSlider [
 		self EditScaleDisplayElement: pyramidSelectionWidgetExtension elementAtMain scaleValue: scaleValue ].
 	
 	slider scaledZoomValue: self maxScaleValue.
-	scaleLap := slider sliderLapScale.
+	slider sliderLapScale: self scaleLap.
 	
 	^ slider createSlider.
 	
@@ -326,7 +326,7 @@ PyramidSpaceZoomPlugin >> refreshScaledZoom [
 { #category : #accessing }
 PyramidSpaceZoomPlugin >> scaleLap [
 
-	scaleLap
+	^ scaleLap
 ]
 
 { #category : #accessing }
