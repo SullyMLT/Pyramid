@@ -231,10 +231,10 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 							   - pyramidSelectionWidgetExtension movingForGrid y).
 					  aBlElement extent y < minimumSizeForRightOrBottom
 						  ifTrue: [ rightDynamicSize extent: 0 @ 0 ]
-						  ifFalse: [ rightDynamicSize size: resizeElementSize ].
+						  ifFalse: [ rightDynamicSize extent: resizeElementSize ].
 					  aBlElement extent x < minimumSizeForRightOrBottom
 						  ifTrue: [ bottomDynamicSize size: 0 @ 0 ]
-						  ifFalse: [ bottomDynamicSize size: resizeElementSize ] ] ]
+						  ifFalse: [ bottomDynamicSize extent: resizeElementSize ] ] ]
 ]
 
 { #category : #'event creation' }
