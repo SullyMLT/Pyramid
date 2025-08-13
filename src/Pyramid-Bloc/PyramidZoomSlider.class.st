@@ -71,9 +71,7 @@ PyramidZoomSlider >> initialize [
 	sliderDefaultValue := 100.
 	sliderMinimumValue := 10.
 	sliderPaddingWidth := 40.
-	sliderLap := 10.
-
-	self refreshSlider
+	sliderLap := 10
 ]
 
 { #category : #accessing }
@@ -124,6 +122,16 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 ]
 
 { #category : #'as yet unclassified' }
+PyramidZoomSlider >> pourcentTextElement: aValue [
+
+	^ (BlTextElement new
+					 text:
+						 ((aValue * sliderLap + sliderMinimumValue) asString , '%')
+							 asRopedText;
+					 position: aValue * sliderLap + (sliderPaddingWidth / 4) @ 20)
+]
+
+{ #category : #'as yet unclassified' }
 PyramidZoomSlider >> refreshSlider [
 
 	| sliderContainerWidth nbLap cornerRadius nbLapUnderDefaultValue |
@@ -166,11 +174,7 @@ PyramidZoomSlider >> refreshSlider [
 				extent: 2 @ 10 ].
 
 		(i + 1 * sliderLap / 50) isInteger ifTrue: [
-			sliderContainer addChild: (BlTextElement new
-					 text:
-						 ((i * sliderLap + sliderMinimumValue) asString , '%')
-							 asRopedText;
-					 position: i * sliderLap + (sliderPaddingWidth / 4) @ 20). "(((i + 1) * sliderLap)"
+			sliderContainer addChild: (self pourcentTextElement: i).
 			e
 				background: Color blue;
 				extent: 2 @ 10 ].
@@ -187,21 +191,13 @@ PyramidZoomSlider >> refreshSlider [
 
 		i = nbLap
 			ifTrue: [
-				sliderContainer addChild: (BlTextElement new
-						 text:
-							 ((i * sliderLap + sliderMinimumValue) asString , '%')
-								 asRopedText;
-						 position: i * sliderLap + (sliderPaddingWidth / 4) @ 20).
+				sliderContainer addChild: (self pourcentTextElement: i).
 				e
 					background: Color blue;
 					extent: 2 @ 10 ]
 			ifFalse: [
 				(i + 1 * sliderLap / 50) isInteger ifTrue: [
-					sliderContainer addChild: (BlTextElement new
-							 text:
-								 ((i * sliderLap + sliderMinimumValue) asString , '%')
-									 asRopedText;
-							 position: i * sliderLap + (sliderPaddingWidth / 4) @ 20).
+					sliderContainer addChild: (self pourcentTextElement: i).
 					e
 						background: Color blue;
 						extent: 2 @ 10 ] ].
