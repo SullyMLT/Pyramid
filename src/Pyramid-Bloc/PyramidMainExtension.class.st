@@ -132,14 +132,10 @@ PyramidMainExtension >> grid: aParent cellSpacing: aNumber color: aColor width: 
 
 	| elementGridHorizontal elementGridVertical nbLineGridHorizontal nbLineGridVertical lineGridModWidth lineGridModHeight |
 	elementGridHorizontal := BlElement new id: #gridHorizontal.
-	elementGridHorizontal layout: BlLinearLayout vertical.
-	elementGridHorizontal layout cellSpacing: aNumber - 1.
 	elementGridHorizontal constraints horizontal matchParent.
 	elementGridHorizontal constraints vertical matchParent.
 
 	elementGridVertical := BlElement new id: #gridVertical.
-	elementGridVertical layout: BlLinearLayout horizontal.
-	elementGridVertical layout cellSpacing: aNumber - 1.
 	elementGridVertical constraints horizontal matchParent.
 	elementGridVertical constraints vertical matchParent.
 
@@ -153,8 +149,8 @@ PyramidMainExtension >> grid: aParent cellSpacing: aNumber color: aColor width: 
 		| e |
 		e := BlElement new.
 		e background: aColor.
-		e border: aColor.
-		e height: 1.
+		e height: 0.5.
+		e position: 0@(i*aNumber)-0.25.
 		e constraints horizontal matchParent.
 		elementGridHorizontal addChild: e ].
 
@@ -168,8 +164,8 @@ PyramidMainExtension >> grid: aParent cellSpacing: aNumber color: aColor width: 
 		| e |
 		e := BlElement new.
 		e background: aColor.
-		e border: aColor.
-		e width: 1.
+		e width: 0.5.
+		e position: (i*aNumber)-0.25@0.
 		e constraints vertical matchParent.
 		elementGridVertical addChild: e ].
 
