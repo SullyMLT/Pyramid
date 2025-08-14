@@ -45,6 +45,8 @@ PyramidSelectionWidgetExtension >> centerDragEvent: anEvent [
 	anEvent primaryButtonPressed ifFalse: [
 		self centerDragEnd: anEvent.
 		^ self ].
+	self scaleFactor <= 0.1 ifTrue: [ self scaleFactor: 0.10000000000000003 ].
+	self movingLap <= 0 ifTrue: [ self movingLap: 1 ].
 	self childCurrentTranslation: (((anEvent position - self dragOrigin)/self scaleFactor) / self movingLap) rounded * self movingLap.
 	self widgetElement transformDo: [ :t | "Move the dragged and selected element with the lap of the grid spacing"
 		t translateBy: self childCurrentTranslation ].
@@ -261,7 +263,6 @@ PyramidSelectionWidgetExtension >> projectModel: aProjectModel [
 		when: PyramidSelectionChangedEvent
 		do: [ :evt | self pyramidSelectionChanged: evt ]
 		for: self.
-	"pyramidDynamicResizer projectModel: aProjectModel."
 	self makeNewSelection
 	
 ]
