@@ -10,6 +10,8 @@ Trait {
 
 { #category : #accessing }
 TPyramidShortcutSpec >> defaultKeyCombination [
+
+	keyCombination
 ]
 
 { #category : #initialization }
