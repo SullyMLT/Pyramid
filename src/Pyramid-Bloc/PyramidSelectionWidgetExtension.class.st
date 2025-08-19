@@ -12,7 +12,8 @@ Class {
 		'movingLap',
 		'childCurrentTranslation',
 		'movingForGrid',
-		'scaleFactor'
+		'scaleFactor',
+		'pyramidDynamicResizer'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -117,7 +118,9 @@ PyramidSelectionWidgetExtension >> dragOrigin: anObject [
 PyramidSelectionWidgetExtension >> editor: aPyramidEditor [
 	
 	self commandExecutor:
-		aPyramidEditor commandExecutor
+		aPyramidEditor commandExecutor.
+		
+	pyramidDynamicResizer setupExtension: aPyramidEditor
 ]
 
 { #category : #events }
@@ -137,7 +140,9 @@ PyramidSelectionWidgetExtension >> initialize [
 	dragOrigin := 0 @ 0.
 	isDragging := false.
 	movingLap := 1.
-	scaleFactor := 1
+	scaleFactor := 1.
+	
+	pyramidDynamicResizer := PyramidDynamicResizer new.
 ]
 
 { #category : #displaying }
@@ -193,6 +198,8 @@ PyramidSelectionWidgetExtension >> makeMonoSelectionFor: aBlElement [
 				                 do: [ :evt | self isDragging ifTrue: [ self centerDragEnd: evt ] ]);
 		                yourself.
 	borderElement := PyramidSelectionWidgetBorderBuilder new build.
+	
+	pyramidDynamicResizer installOnDynamicResizer: eventElement.
 	
 	monoSelection addChild: dragGhostElement.
 	monoSelection addChild: borderElement.
