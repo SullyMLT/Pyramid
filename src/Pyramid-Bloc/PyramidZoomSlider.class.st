@@ -9,8 +9,8 @@ Class {
 		'lineSlider',
 		'blocToMove',
 		'moveEvent',
-		'currentBlocSliderTranslation',
 		'scaleValue',
+		'currentBlocSliderTranslation',
 		'blockAction',
 		'sliderLap',
 		'sliderDefaultValue',
@@ -19,16 +19,16 @@ Class {
 		'dragSlider',
 		'sliderPaddingWidth',
 		'sliderMinimumValue',
-		'blText',
-		'blElementBlText'
+		'blTextScaleValue',
+		'blTextScaleValueContainer'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
 
 { #category : #accessing }
-PyramidZoomSlider >> blText: aScaleValue [
+PyramidZoomSlider >> blTextScaleValue: aScaleValue [
 
-	blText text: ((aScaleValue*100) rounded asString , '%') asRopedText.
+	blTextScaleValue text: ((aScaleValue*100) rounded asString , '%') asRopedText.
 ]
 
 { #category : #accessing }
@@ -38,7 +38,7 @@ PyramidZoomSlider >> blocToMoveZoomPosition: aScaleValue [
 	value := ((aScaleValue -1) * 100.0).
 	
 	blocToMove transformDo: [ :t | t translateBy: value@0 ].
-	self blText: aScaleValue.
+	self blTextScaleValue: aScaleValue.
 ]
 
 { #category : #helpers }
@@ -82,14 +82,14 @@ PyramidZoomSlider >> initialize [
 	sliderPaddingWidth := 40.
 	sliderLap := 10.
 
-	blElementBlText := BlElement new layout: BlFrameLayout new.
-	blText := BlTextElement new.
-	blText constraintsDo: [ :c |
+	blTextScaleValueContainer := BlElement new layout: BlFrameLayout new.
+	blTextScaleValue := BlTextElement new.
+	blTextScaleValue constraintsDo: [ :c |
 		c frame horizontal alignCenter.
 		c frame vertical alignCenter ].
-	blText text: (sliderDefaultValue rounded asString , '%') asRopedText.
+	blTextScaleValue text: (sliderDefaultValue rounded asString , '%') asRopedText.
 	
-	blElementBlText addChild: blText.
+	blTextScaleValueContainer addChild: blTextScaleValue.
 ]
 
 { #category : #accessing }
@@ -117,7 +117,7 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 
 			  self currentBlocSliderTranslation:
 				  (evt position x - sliderContainer position x
-				   - blocToMove position x / sliderLap) rounded * sliderLap @ 0.
+				   - (blocToMove position x + (blocToMove extent x/2)) / sliderLap) rounded * sliderLap @ 0.
 			  blocToMove transformDo: [ :t | "Intervalle si inférieur à la taille max du slider (ligne) 
 														et si supérieur à la taille minimum
 				  Interval if less than slider max size (line) and if greater than minimum size"
@@ -125,7 +125,6 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 					  ifTrue: [
 						  self currentBlocSliderTranslation x > ((sliderDefaultValue - sliderMinimumValue + 1) * -1)
 							  ifTrue: [
-								
 								  t translateBy: self currentBlocSliderTranslation.
 								  scaleValue := 1 + (self currentBlocSliderTranslation x / 100.0).
 								  scaleValue < 0.1 ifTrue: [ scaleValue := self sliderMinScale ] ]
@@ -136,7 +135,7 @@ PyramidZoomSlider >> moveBlocSliderEvent [
 						  t translateBy: self maxBlocMoveSliderLength.
 						  scaleValue := self sliderMaxScale ].
 				  blockAction value: scaleValue.
-				  blText text: ((scaleValue *100)rounded asString, '%') asRopedText. ].
+				  blTextScaleValue text: ((scaleValue *100)rounded asString, '%') asRopedText. ].
 			  evt consumed: true ]
 ]
 
@@ -151,12 +150,23 @@ PyramidZoomSlider >> pourcentTextElement: aValue [
 ]
 
 { #category : #'as yet unclassified' }
+PyramidZoomSlider >> pourcentTextElement: aPositionX text: aValueOfText [
+
+	^ (BlTextElement new
+					 text:
+						 (aValueOfText asString , '%')
+							 asRopedText;
+					 position: aPositionX * sliderLap + (sliderPaddingWidth / 4) @ 20)
+]
+
+{ #category : #'as yet unclassified' }
 PyramidZoomSlider >> refreshSlider [
 
-	| sliderContainerWidth nbLap cornerRadius nbLapUnderDefaultValue |
+	| sliderContainerWidth nbLap cornerRadius nbLapUnderDefaultValue scaleValueForText |
 	nbLapUnderDefaultValue := sliderDefaultValue - sliderMinimumValue / 10.
 	lineSliderWidth := sliderWidth - sliderMinimumValue.
-	sliderContainerWidth := sliderWidth + sliderPaddingWidth + 62.
+	sliderContainerWidth := sliderWidth + sliderPaddingWidth - sliderMinimumValue + 70.
+	scaleValueForText := sliderMinimumValue.
 
 	sliderContainer := BlElement new.
 	sliderContainer
@@ -174,51 +184,37 @@ PyramidZoomSlider >> refreshSlider [
 		extent: lineSliderWidth @ 2;
 		position: sliderPaddingWidth / 2 @ 9;
 		background: Color black.
-	
-	0 to: nbLapUnderDefaultValue - 1 do: [ :i |
-		| e |
-		e := BlElement new.
-		e
-			background: Color gray;
-			extent: 1 @ 10;
-			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
-
-		i = 0 ifTrue: [
-			sliderContainer addChild: (BlTextElement new
-					 text: (sliderMinimumValue asString , '%') asRopedText;
-					 position: sliderPaddingWidth / 4 @ 20).
-			e
-				background: Color blue;
-				extent: 2 @ 10 ].
-
-		((i + 1) * sliderLap / 50) isInteger ifTrue: [
-			sliderContainer addChild: (self pourcentTextElement: i).
-			e
-				background: Color blue;
-				extent: 2 @ 10 ].
-		sliderContainer addChild: e ].
-
+		
 	nbLap := lineSliderWidth / sliderLap.
-	nbLapUnderDefaultValue to: nbLap do: [ :i |
+	
+	0 to: nbLap do: [ :i |
 		| e |
 		e := BlElement new.
 		e
 			background: Color gray;
 			extent: 1 @ 10;
 			position: i * sliderLap + (sliderPaddingWidth / 2) @ 5.
-
-		i = nbLap
-			ifTrue: [
-				sliderContainer addChild: (self pourcentTextElement: i).
+			
+		i = 0
+		ifTrue: [ sliderContainer addChild: (self pourcentTextElement: i text: (scaleValueForText)rounded).
+			e
+				background: Color blue;
+				extent: 2 @ 10. ].
+			
+		scaleValueForText = 100 
+		ifTrue: [ 
+			sliderContainer addChild: (self pourcentTextElement: i text: (scaleValueForText)rounded).
+			e
+				background: Color blue;
+				extent: 2 @ 10 ]
+		ifFalse: [  
+			(scaleValueForText / 50) isInteger ifTrue: [
+				sliderContainer addChild: (self pourcentTextElement: i text: (scaleValueForText)rounded).
 				e
 					background: Color blue;
-					extent: 2 @ 10 ]
-			ifFalse: [
-				((i + 1) * sliderLap / 50) isInteger ifTrue: [
-					sliderContainer addChild: (self pourcentTextElement: i).
-					e
-						background: Color blue;
-						extent: 2 @ 10 ] ].
+					extent: 2 @ 10 ] ].
+		scaleValueForText := scaleValueForText + sliderLap.
+		
 		sliderContainer addChild: e ].
 
 	cornerRadius := BlRoundedRectangleGeometry cornerRadii:
@@ -244,13 +240,13 @@ PyramidZoomSlider >> refreshSlider [
 					 moveEvent := self moveBlocSliderEvent.
 					 sliderContainer addEventHandler: moveEvent ] ]).
 			
-	blElementBlText position: (sliderContainerWidth - 57)@7.5.
-	blElementBlText extent: 50@20.
-	blElementBlText border: (BlBorder paint: Color black).
+	blTextScaleValueContainer position: (sliderContainerWidth - 57)@7.5.
+	blTextScaleValueContainer extent: 50@20.
+	blTextScaleValueContainer border: (BlBorder paint: Color black).
 
 	sliderContainer addChild: lineSlider.
 	sliderContainer addChild: blocToMove.
-	sliderContainer addChild: blElementBlText.
+	sliderContainer addChild: blTextScaleValueContainer.
 
 	^ sliderContainer
 ]
@@ -281,9 +277,21 @@ PyramidZoomSlider >> sliderMaxScale [
 
 { #category : #'as yet unclassified' }
 PyramidZoomSlider >> sliderMinScale [
-	
-	sliderMinimumValue <= 10 ifTrue: [ ^ 0.10000000000000003 ].
-	^ ((sliderMinimumValue)/100)
+
+	^ (sliderMinimumValue / 100)
+]
+
+{ #category : #accessing }
+PyramidZoomSlider >> sliderMinimumValue [
+
+	^ sliderMinimumValue
+]
+
+{ #category : #accessing }
+PyramidZoomSlider >> sliderMinimumValue: aScaleValue [
+
+	sliderMinimumValue := (aScaleValue * 100) rounded.
+	sliderMinimumValue < 10 ifTrue: [ sliderMinimumValue := 10 ]
 ]
 
 { #category : #enumerating }

@@ -12,8 +12,7 @@ Class {
 		'movingLap',
 		'childCurrentTranslation',
 		'movingForGrid',
-		'scaleFactor',
-		'pyramidDynamicResizer'
+		'scaleFactor'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -45,7 +44,7 @@ PyramidSelectionWidgetExtension >> centerDragEvent: anEvent [
 	anEvent primaryButtonPressed ifFalse: [
 		self centerDragEnd: anEvent.
 		^ self ].
-	self scaleFactor <= 0.1 ifTrue: [ self scaleFactor: 0.10000000000000003 ].
+	self scaleFactor <= 0.1 ifTrue: [ self scaleFactor: 0.1 ].
 	self movingLap <= 0 ifTrue: [ self movingLap: 1 ].
 	self childCurrentTranslation: (((anEvent position - self dragOrigin)/self scaleFactor) / self movingLap) rounded * self movingLap.
 	self widgetElement transformDo: [ :t | "Move the dragged and selected element with the lap of the grid spacing"
@@ -118,9 +117,7 @@ PyramidSelectionWidgetExtension >> dragOrigin: anObject [
 PyramidSelectionWidgetExtension >> editor: aPyramidEditor [
 	
 	self commandExecutor:
-		aPyramidEditor commandExecutor.
-		
-	pyramidDynamicResizer setupExtension: aPyramidEditor.
+		aPyramidEditor commandExecutor
 ]
 
 { #category : #events }
@@ -140,9 +137,7 @@ PyramidSelectionWidgetExtension >> initialize [
 	dragOrigin := 0 @ 0.
 	isDragging := false.
 	movingLap := 1.
-	scaleFactor := 1.
-	
-	pyramidDynamicResizer := PyramidDynamicResizer new.
+	scaleFactor := 1
 ]
 
 { #category : #displaying }
@@ -198,8 +193,6 @@ PyramidSelectionWidgetExtension >> makeMonoSelectionFor: aBlElement [
 				                 do: [ :evt | self isDragging ifTrue: [ self centerDragEnd: evt ] ]);
 		                yourself.
 	borderElement := PyramidSelectionWidgetBorderBuilder new build.
-	
-	pyramidDynamicResizer installOnDynamicResizer: eventElement.
 	
 	monoSelection addChild: dragGhostElement.
 	monoSelection addChild: borderElement.
