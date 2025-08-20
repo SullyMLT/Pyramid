@@ -31,10 +31,20 @@ TPyramidShortcutSpace >> keyCombination: aKeyCombination [
 { #category : #'accessing - classes' }
 TPyramidShortcutSpace >> pluginFromPyramid: aPyramidEditor [
 	
+	"Example of implementation
+	
 	| listOfPlugins pluginSorted |
 	
 	listOfPlugins := aPyramidEditor plugins.
-	pluginSorted := listOfPlugins select: [ :extensions | "extensions isKindOf: PyramidHistoryPlugin" ].
+	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidHistoryPlugin ].
+	pluginSorted size = 1
+	ifFalse: [^ self].
+	plugin := pluginSorted asArray first."
+	
+	| listOfPlugins pluginSorted |
+	
+	listOfPlugins := aPyramidEditor plugins.
+	pluginSorted := listOfPlugins select: [ :extensions | ].
 	pluginSorted size = 1
 	ifFalse: [^ self].
 	plugin := pluginSorted asArray first

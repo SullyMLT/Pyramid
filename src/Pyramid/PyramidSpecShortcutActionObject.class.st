@@ -6,9 +6,10 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'shortcut',
-		'action'
+		'action',
+		'name'
 	],
-	#category : #'Pyramid-Bloc-plugin-shortcut-manager'
+	#category : #'Pyramid-core'
 }
 
 { #category : #accessing }
@@ -27,6 +28,18 @@ PyramidSpecShortcutActionObject >> action: aBlock [
 PyramidSpecShortcutActionObject >> initialize [ 
 
 	"Do nothing"
+]
+
+{ #category : #accessing }
+PyramidSpecShortcutActionObject >> name [
+
+	^ name
+]
+
+{ #category : #accessing }
+PyramidSpecShortcutActionObject >> name: aString [
+
+	name := aString
 ]
 
 { #category : #accessing }

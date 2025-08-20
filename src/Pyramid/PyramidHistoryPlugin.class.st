@@ -44,7 +44,8 @@ PyramidHistoryPlugin >> configureBuilder: aPyramidEditorBuilder [
 PyramidHistoryPlugin >> connectOn: aPyramidEditor [
 
 	self projectModel: aPyramidEditor projectModel.
-	self pyramidElementsChanged: nil
+	self pyramidElementsChanged: nil.
+	self shortcutToAdd: aPyramidEditor
 ]
 
 { #category : #accessing }
@@ -108,6 +109,22 @@ PyramidHistoryPlugin >> pyramidElementsChanged: anEvent [
 PyramidHistoryPlugin >> redoButton [
 
 	^ redoButton
+]
+
+{ #category : #adding }
+PyramidHistoryPlugin >> shortcutToAdd: aPyramidEditor [
+
+	aPyramidEditor
+		addShortcutSpecInCollection: $z command mac | $z control unix | $z control win
+		action: [ self history undo.
+					self projectModel informElementsChanged ]
+		name: 'Shortcut Spec undo'.
+		
+	aPyramidEditor
+		addShortcutSpecInCollection: $y command mac | $y control unix | $y control win
+		action: [ self history redo.
+					self projectModel informElementsChanged ]
+		name: 'Shortcut Spec redo'.
 ]
 
 { #category : #accessing }

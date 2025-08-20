@@ -31,7 +31,7 @@ PyramidNavigationPlugin >> connectOn: aPyramidEditor [
 	editor := aPyramidEditor.
 	self navigation editor: aPyramidEditor.
 	self libraryController popoverOrigin:
-		(aPyramidEditor window services at: #tabLeft) presenter.
+		(aPyramidEditor window services at: #tabLeft) presenter
 ]
 
 { #category : #initialization }
@@ -109,4 +109,13 @@ PyramidNavigationPlugin >> removeSelectedElements [
 
 	"Update the selection after remove"
 	self editor projectModel updateSelection
+]
+
+{ #category : #adding }
+PyramidNavigationPlugin >> shortcutToAdd: aPyramidEditor [
+
+	aPyramidEditor
+		addShortcutSpecInCollection: KeyboardKey delete
+		action: [ self removeSelectedElements ]
+		name: 'Shortcut Spec removeSelectedElement'.
 ]

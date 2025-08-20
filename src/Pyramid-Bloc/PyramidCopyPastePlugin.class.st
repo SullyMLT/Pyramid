@@ -20,7 +20,7 @@ PyramidCopyPastePlugin >> addPanelsOn: aPyramidSimpleWindow [
 { #category : #connecting }
 PyramidCopyPastePlugin >> connectOn: aPyramidEditor [
 
-	self editor: aPyramidEditor.
+	self editor: aPyramidEditor
 ]
 
 { #category : #copying }
@@ -87,6 +87,40 @@ PyramidCopyPastePlugin >> copyAsStonMenu: aBuilder [
 		order: 20
 ]
 
+{ #category : #copying }
+PyramidCopyPastePlugin >> copyForShortcut [
+	
+	| elementCollectionSelected |
+	
+	elementCollectionSelected := self editor projectModel selection collection.
+	elementCollectionSelected isEmpty ifTrue: [ ^ self ].
+	elementCollectionSelected size = 1
+		ifTrue: [
+			self copyAsStonInClipboard: elementCollectionSelected first ]
+		ifFalse: [ self inform: 'Can not copy multiple element' ]
+]
+
+{ #category : #'as yet unclassified' }
+PyramidCopyPastePlugin >> cutForShortcut [
+
+	| projectModel |
+	projectModel := self editor projectModel.
+
+	projectModel selection collection isEmpty ifTrue: [ ^ self ].
+	projectModel selection collection size = 1
+		ifFalse: [ self inform: 'Cannot cut multiple element'. ^ self ].
+
+	self copyAsStonInClipboard: projectModel selection collection first.
+
+	self editor commandExecutor
+		use: PyramidRemoveSelectedElementsCommand new
+		on: projectModel selection
+		with: projectModel firstLevelElements.
+
+	"Update the selection after remove"
+	projectModel updateSelection
+]
+
 { #category : #accessing }
 PyramidCopyPastePlugin >> editor [
 
@@ -97,6 +131,21 @@ PyramidCopyPastePlugin >> editor [
 PyramidCopyPastePlugin >> editor: anObject [
 
 	editor := anObject
+]
+
+{ #category : #'as yet unclassified' }
+PyramidCopyPastePlugin >> pasteForShortcut [
+
+	| elementCollectionSelected |
+	
+	elementCollectionSelected := self editor projectModel selection collection.
+
+	elementCollectionSelected isEmpty ifTrue: [
+		self pasteFromClipboardOnFirstLevelElements. ^ self ].
+	elementCollectionSelected size = 1 ifTrue: [
+		self pasteFromClipboardOnSelection:
+			elementCollectionSelected first ]
+		ifFalse: [ self inform: 'Cannot paste in multiple element' ]
 ]
 
 { #category : #copying }
@@ -136,4 +185,26 @@ PyramidCopyPastePlugin >> pasteFromClipboardOnSelection: aBlElement [
 		use: PyramidAddChildrenCommand new
 		on: self editor projectModel selection
 		with: copiedElement ]
+]
+
+{ #category : #adding }
+PyramidCopyPastePlugin >> shortcutToAdd: aPyramidEditor [
+
+	aPyramidEditor
+		addShortcutSpecInCollection:
+		$c command mac | $c control unix | $c control win
+		action: [ self copyForShortcut ]
+		name: 'Shortcut Spec Copy'.
+		
+	aPyramidEditor
+		addShortcutSpecInCollection:
+		$v command mac | $v control unix | $v control win
+		action: [ self pasteForShortcut ]
+		name: 'Shortcut Spec Paste'.
+		
+	aPyramidEditor
+		addShortcutSpecInCollection:
+		$x command mac | $x control unix | $x control win
+		action: [ self cutForShortcut ]
+		name: 'Shortcut Spec Cut'
 ]

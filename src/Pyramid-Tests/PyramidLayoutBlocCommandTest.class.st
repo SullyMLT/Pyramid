@@ -46,7 +46,6 @@ PyramidLayoutBlocCommandTest >> targetContainers [
 { #category : #'as yet unclassified' }
 PyramidLayoutBlocCommandTest >> targetsCanBeUsedFor [
 
-	"^ self targetContainers flatCollect: [ :each | { each targetNoProp . each targetWithProp } ]."
 	^ self targetContainers collect: [ :each | each targetNoProp  ].
 ]
 
