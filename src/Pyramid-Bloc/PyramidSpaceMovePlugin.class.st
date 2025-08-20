@@ -22,7 +22,9 @@ PyramidSpaceMovePlugin >> connectOn: aPyramidEditor [
 	
 	pyramidWheelTransformExtension ifNil: [ ^ self ].
 
-	self installOnMoveSpace
+	self installOnMoveSpace.
+	
+	pyramidWheelTransformExtension elementAtEvents background: Color black; opacity: 0.5
 ]
 
 { #category : #accessing }
