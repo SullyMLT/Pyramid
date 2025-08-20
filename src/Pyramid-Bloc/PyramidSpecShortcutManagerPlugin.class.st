@@ -1,8 +1,9 @@
 "
-This class is use to add shortcut to the space in pyramid to use feature.
+This class is use to add shortcut to the spec in pyramid to use different feature.
 
-To add new shortcut the best exemple is the PyramidSpecShortcutSave, you can see how it is implement and check this current class (here) to initialize the shortcut in the message :
-- initialize (add the shortcut class to the collectionOfShortcutClass)
+To add new shortcut you just need to put the shortcut class to the subclasses of this current class with the trait (TPyramidShortcutSpec) and fill the different message.
+
+You can take the PyramidSpecShortcutSave as example to do a new shortcut.
 
 List of current active shortcut (default value) :
 - Save -> ctrl + S
@@ -14,11 +15,15 @@ List of current active shortcut (default value) :
 - Grid visibility switch -> ctrl + G
 - Select all element -> ctrl + A
 - Unselect all element -> Escape
-- Delete selected element -> ctrl + D
+- Delete selected element -> Delete (ENG) / SUPPR (FR)
 - Inspect one selected element -> ctrl + I
-- Move child index Up -> ctrl + Arrow Up
-- Move child index Down -> ctrl + Arrow Down
-- Move element to position zero -> ctrl + Space
+- Move child index Up -> Page Up
+- Move child index Down -> Page Down
+- Move a selected element to the right -> arrow Right
+- Move a selected element to the left -> arrow Left
+- Move a selected element to the up -> arrow Up
+- Move a selected element to the down -> arrow Down
+- Move a selected element to the mouse position -> ctrl + space
 "
 Class {
 	#name : #PyramidSpecShortcutManagerPlugin,

@@ -214,7 +214,7 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 						  aBlElement extent x @ (self currentTranslation y
 						   - pyramidSelectionWidgetExtension movingForGrid y).
 					  aBlElement extent y < minimumSizeForRightOrBottom
-						  ifTrue: [ rightDynamicSize size: 0 @ 0 ]
+						  ifTrue: [ rightDynamicSize extent: 0 @ 0 ]
 						  ifFalse: [ rightDynamicSize extent: resizeElementSize ] ] ]
 ]
 
@@ -279,7 +279,7 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 						  @ aBlElement extent y.
 					  aBlElement extent x < minimumSizeForRightOrBottom
 						  ifTrue: [ bottomDynamicSize size: 0 @ 0 ]
-						  ifFalse: [ bottomDynamicSize size: resizeElementSize ] ] ]
+						  ifFalse: [ bottomDynamicSize extent: resizeElementSize ] ] ]
 ]
 
 { #category : #'accessing - classes' }

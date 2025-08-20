@@ -16,9 +16,9 @@ Class {
 
 { #category : #accessing }
 PyramidSpecShortcutMoveChildUpInParent >> defaultKeyCombination [
-	"Page Up to activate this shortcut"
+	"PageUp to activate this shortcut"
 
-	keyCombination := Character pageUp
+	keyCombination := KeyboardKey pageUp
 ]
 
 { #category : #initialization }

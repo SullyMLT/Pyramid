@@ -10,8 +10,6 @@ Trait {
 
 { #category : #accessing }
 TPyramidShortcutSpec >> defaultKeyCombination [
-
-	keyCombination
 ]
 
 { #category : #initialization }
@@ -46,6 +44,6 @@ TPyramidShortcutSpec >> shortcutAction [
 		  shortcut: keyCombination;
 		  action: [
 			  plugin
-				  ifNil: [ self inform: 'problem with the plugin' ]
+				  ifNil: [ self inform: 'Problem with the plugin' ]
 				  ifNotNil: [ "Action here" ] ]
 ]
