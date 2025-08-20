@@ -134,7 +134,6 @@ PyramidEditor >> open [
 	self window open.
 	self plugins do: [ :plugin | plugin windowOpenBy: self ].
 	
-	"self plugins do: [ :plugin | plugin shortcutToAdd: self ]."
 	self defaultSpecShortcuts.
 
 	collectionOfShortcutSpec do: [ :shortcutClass |

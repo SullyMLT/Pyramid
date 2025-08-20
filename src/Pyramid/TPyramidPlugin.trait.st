@@ -49,17 +49,6 @@ TPyramidPlugin >> configureBuilder: aPyramidEditorBuilder [
 TPyramidPlugin >> connectOn: aPyramidEditor [
 ]
 
-{ #category : #adding }
-TPyramidPlugin >> shortcutToAdd: aPyramidEditor [
-
-	"example of shortcut for Spec
-	
-	aPyramidEditor
-		addShortcutSpecInCollection: $c command mac | $c control unix | $c control win
-		action: [ ""Action Here"" ]
-		name: 'Shortcut Spec <Name_Of_Action>'."
-]
-
 { #category : #connecting }
 TPyramidPlugin >> windowOpenBy: aPyramidEditor [
 ]

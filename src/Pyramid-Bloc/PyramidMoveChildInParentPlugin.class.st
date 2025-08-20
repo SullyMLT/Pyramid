@@ -28,7 +28,17 @@ PyramidMoveChildInParentPlugin >> connectOn: aPyramidEditor [
 
 	editor := aPyramidEditor.
 	projectModel := aPyramidEditor projectModel.
-	self navigationFromPyramid: aPyramidEditor
+	self navigationFromPyramid: aPyramidEditor.
+	
+	aPyramidEditor
+		addShortcutSpecInCollection: KeyboardKey pageUp
+		action: [ self moveChildIndexUpInParent ]
+		name: 'Shortcut spec move child index up'.
+		
+	aPyramidEditor
+		addShortcutSpecInCollection: KeyboardKey pageDown
+		action: [ self moveChildIndexDownInParent ]
+		name: 'Shortcut spec move child index down'.
 ]
 
 { #category : #adding }
@@ -160,18 +170,4 @@ PyramidMoveChildInParentPlugin >> refreshTreeTable [
 	"Refresh the treeTable"
 	navigationSelectionPanel treeTable roots: navigationSelectionPanel treeTable roots.
 	navigationSelectionPanel treeTable selectItem: selectedItems
-]
-
-{ #category : #adding }
-PyramidMoveChildInParentPlugin >> shortcutToAdd: aPyramidEditor [
-
-	aPyramidEditor
-		addShortcutSpecInCollection: KeyboardKey pageUp
-		action: [ self moveChildIndexUpInParent ]
-		name: 'Shortcut spec move child index up'.
-		
-	aPyramidEditor
-		addShortcutSpecInCollection: KeyboardKey pageDown
-		action: [ self moveChildIndexDownInParent ]
-		name: 'Shortcut spec move child index down'.
 ]

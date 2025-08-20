@@ -20,7 +20,25 @@ PyramidCopyPastePlugin >> addPanelsOn: aPyramidSimpleWindow [
 { #category : #connecting }
 PyramidCopyPastePlugin >> connectOn: aPyramidEditor [
 
-	self editor: aPyramidEditor
+	self editor: aPyramidEditor.
+	
+	aPyramidEditor
+		addShortcutSpecInCollection:
+		$c command mac | $c control unix | $c control win
+		action: [ self copyForShortcut ]
+		name: 'Shortcut Spec Copy'.
+		
+	aPyramidEditor
+		addShortcutSpecInCollection:
+		$v command mac | $v control unix | $v control win
+		action: [ self pasteForShortcut ]
+		name: 'Shortcut Spec Paste'.
+		
+	aPyramidEditor
+		addShortcutSpecInCollection:
+		$x command mac | $x control unix | $x control win
+		action: [ self cutForShortcut ]
+		name: 'Shortcut Spec Cut'
 ]
 
 { #category : #copying }
@@ -185,26 +203,4 @@ PyramidCopyPastePlugin >> pasteFromClipboardOnSelection: aBlElement [
 		use: PyramidAddChildrenCommand new
 		on: self editor projectModel selection
 		with: copiedElement ]
-]
-
-{ #category : #adding }
-PyramidCopyPastePlugin >> shortcutToAdd: aPyramidEditor [
-
-	aPyramidEditor
-		addShortcutSpecInCollection:
-		$c command mac | $c control unix | $c control win
-		action: [ self copyForShortcut ]
-		name: 'Shortcut Spec Copy'.
-		
-	aPyramidEditor
-		addShortcutSpecInCollection:
-		$v command mac | $v control unix | $v control win
-		action: [ self pasteForShortcut ]
-		name: 'Shortcut Spec Paste'.
-		
-	aPyramidEditor
-		addShortcutSpecInCollection:
-		$x command mac | $x control unix | $x control win
-		action: [ self cutForShortcut ]
-		name: 'Shortcut Spec Cut'
 ]
