@@ -7,10 +7,17 @@ Class {
 		'builder',
 		'morphicPresenter',
 		'resetSpaceButton',
-		'resetShortcutBlock'
+		'resetShortcutBlock',
+		'spaceEventCollection'
 	],
 	#category : #'Pyramid-Bloc-plugin-space'
 }
+
+{ #category : #adding }
+PyramidSpacePlugin >> addEventHandlerToSpaceEventCollection: anEventHandler [
+	
+	spaceEventCollection add: anEventHandler
+]
 
 { #category : #adding }
 PyramidSpacePlugin >> addPanelsOn: aPyramidSimpleWindow [
@@ -32,7 +39,6 @@ PyramidSpacePlugin >> builder [
 PyramidSpacePlugin >> connectOn: aPyramidEditor [
 
 	builder editor: aPyramidEditor.
-	self resetSpace.
 	self defaultShortcutsForEditor: aPyramidEditor
 ]
 
@@ -75,6 +81,7 @@ PyramidSpacePlugin >> defaultShortcutsForEditor: aPyramidEditor [
 PyramidSpacePlugin >> initialize [
 	
 	resetShortcutBlock := [ :aSpace | ].
+	spaceEventCollection := OrderedCollection new.
 	builder := PyramidSpaceBuilder defaultEditorBuilder.
 	morphicPresenter := SpMorphPresenter new.
 	resetSpaceButton := SpButtonPresenter new
@@ -133,6 +140,7 @@ PyramidSpacePlugin >> resetSpace [
 	space := self builder build.
 	self makePresenterWithBlSpace: space.
 	resetShortcutBlock value: space.
+	spaceEventCollection do: [ :aEventHandler | space addEventHandler: aEventHandler ].
 	space show
 ]
 
@@ -152,4 +160,10 @@ PyramidSpacePlugin >> updateMorphInCaseOfFaillure: aMorph [
 			 target: [ self resetSpace ];
 			 actionSelector: #value;
 			 yourself)
+]
+
+{ #category : #connecting }
+PyramidSpacePlugin >> windowOpenBy: aPyramidEditor [
+
+	self resetSpace.
 ]

@@ -10,7 +10,8 @@ Class {
 		'positionOrigin',
 		'currentTranslation',
 		'moveEvent',
-		'pyramidWheelTransformExtension'
+		'pyramidWheelTransformExtension',
+		'spacePlugin'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -20,7 +21,9 @@ PyramidSpaceMovePlugin >> connectOn: aPyramidEditor [
 
 	self pluginFromPyramid: aPyramidEditor.
 	
-	pyramidWheelTransformExtension ifNil: [ ^ self ]
+	pyramidWheelTransformExtension ifNil: [ ^ self ].
+	
+	self installOnMoveSpace
 ]
 
 { #category : #accessing }
@@ -95,7 +98,7 @@ PyramidSpaceMovePlugin >> initialize [
 { #category : #displaying }
 PyramidSpaceMovePlugin >> installOnMoveSpace [
 
-	pyramidWheelTransformExtension elementAtDisplays space addEventHandler:
+	spacePlugin addEventHandlerToSpaceEventCollection:
 		(BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
@@ -132,7 +135,7 @@ PyramidSpaceMovePlugin >> moveSpaceEvent [
 { #category : #'accessing - classes' }
 PyramidSpaceMovePlugin >> pluginFromPyramid: aPyramidEditor [
 
-	| spacePlugin listOfSpaceExtension pyramidWheelTransformExtensionSet listOfPlugins pluginSorted |
+	| listOfSpaceExtension pyramidWheelTransformExtensionSet listOfPlugins pluginSorted |
 	
 	listOfPlugins := aPyramidEditor plugins.
 	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpacePlugin ].
@@ -171,7 +174,5 @@ PyramidSpaceMovePlugin >> windowOpenBy: aPyramidEditor [
 	
 	pyramidWheelTransformExtension elementAtDisplaysAddons zIndex: 1001.
 	
-	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: self defaultViewPositionButton.
-
-	self installOnMoveSpace
+	pyramidWheelTransformExtension elementAtDisplaysAddons addChild: self defaultViewPositionButton
 ]
