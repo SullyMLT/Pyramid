@@ -142,6 +142,8 @@ PyramidSelectionWidgetExtension >> initialize [
 	movingLap := 1.
 	scaleFactor := 1.
 	
+	self childCurrentTranslation: 0@0.
+	
 	pyramidDynamicResizer := PyramidDynamicResizer new.
 ]
 
