@@ -269,6 +269,12 @@ PyramidSelectionWidgetExtension >> projectModel: aProjectModel [
 	
 ]
 
+{ #category : #accessing }
+PyramidSelectionWidgetExtension >> pyramidDynamicResizer [
+
+	^ pyramidDynamicResizer
+]
+
 { #category : #events }
 PyramidSelectionWidgetExtension >> pyramidSelectionChanged: anEvent [
 

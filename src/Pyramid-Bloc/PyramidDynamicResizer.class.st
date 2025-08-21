@@ -38,9 +38,9 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 		c frame horizontal alignRight.
 		c frame vertical alignBottom ].
 	
-	"(aBlElement extent x < minimumSizeForBottomAndRight and: [
-						   aBlElement extent y < minimumSizeForBottomAndRight ])
-						  ifTrue: [ bottomAndRightResizer extent: 0 @ 0 ]."
+	(aBlElement extent x < minimumSizeForBottomAndRight and: [
+		aBlElement extent y < minimumSizeForBottomAndRight ])
+			ifTrue: [ bottomAndRightResizer extent: 0 @ 0 ].
 
 	bottomAndRightResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
@@ -130,6 +130,12 @@ PyramidDynamicResizer >> currentTranslation: aPosition [
 	currentTranslation := ((aPosition + pyramidSelectionWidgetExtension movingForGrid) / pyramidSelectionWidgetExtension movingLap) rounded * pyramidSelectionWidgetExtension movingLap
 ]
 
+{ #category : #accessing }
+PyramidDynamicResizer >> defaultResizeElementSize [
+
+	^ 8@8
+]
+
 { #category : #adding }
 PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement [
 
@@ -176,10 +182,11 @@ PyramidDynamicResizer >> editor: aPyramidEditor [
 { #category : #initialization }
 PyramidDynamicResizer >> initialize [ 
 	
-	resizeElementSize := 8@8.
+	"8@8"
+	resizeElementSize := self defaultResizeElementSize.
 	resizeElementColor := Color black.
 	minimumSizeForRightOrBottom := 50.
-	minimumSizeForBottomAndRight := 30
+	minimumSizeForBottomAndRight := 15
 ]
 
 { #category : #actions }
@@ -252,11 +259,10 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 						  ifTrue: [ bottomDynamicSize extent: 0 @ 0 ]
 						  ifFalse: [ bottomDynamicSize extent: resizeElementSize ].
 
-					  "(aBlElement extent x < minimumSizeForBottomAndRight and: [
+					  (aBlElement extent x < minimumSizeForBottomAndRight and: [
 						   aBlElement extent y < minimumSizeForBottomAndRight ])
 						  ifTrue: [ bottomAndRightDynamicSize extent: 0 @ 0 ]
-						  ifFalse: [
-						  bottomAndRightDynamicSize extent: resizeElementSize ]."
+						  ifFalse: [ bottomAndRightDynamicSize extent: resizeElementSize ].
 					
 					  resizeContainer extent: (self currentTranslation x
 						  - pyramidSelectionWidgetExtension movingForGrid x
@@ -355,6 +361,21 @@ PyramidDynamicResizer >> resizeCommand: aBlElement with: aSize [
 		on: {aBlElement}
 		with: aSize
 
+]
+
+{ #category : #accessing }
+PyramidDynamicResizer >> resizeElementSize [
+
+	^ resizeElementSize
+]
+
+{ #category : #accessing }
+PyramidDynamicResizer >> resizeElementSize: aSize [
+
+	resizeElementSize := aSize.
+	rightDynamicSize extent: aSize.
+	bottomDynamicSize extent: aSize.
+	bottomAndRightDynamicSize extent: aSize
 ]
 
 { #category : #connecting }
