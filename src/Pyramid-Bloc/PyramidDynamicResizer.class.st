@@ -18,7 +18,8 @@ Class {
 		'minimumSizeForRightOrBottom',
 		'currentTranslation',
 		'positionOrigin',
-		'minimumSizeForBottomAndRight'
+		'minimumSizeForBottomAndRight',
+		'resizeContainer'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-extensions'
 }
@@ -38,8 +39,8 @@ PyramidDynamicResizer >> createBottomAndRightResizerElement: aBlElement [
 		c frame vertical alignBottom ].
 	
 	(aBlElement extent x < minimumSizeForBottomAndRight and: [
-						   aBlElement extent y < minimumSizeForBottomAndRight ])
-						  ifTrue: [ bottomAndRightResizer extent: 0 @ 0 ].
+		aBlElement extent y < minimumSizeForBottomAndRight ])
+			ifTrue: [ bottomAndRightResizer extent: 0 @ 0 ].
 
 	bottomAndRightResizer addEventHandler: (BlEventHandler
 			 on: BlPrimaryMouseDownEvent
@@ -129,10 +130,14 @@ PyramidDynamicResizer >> currentTranslation: aPosition [
 	currentTranslation := ((aPosition + pyramidSelectionWidgetExtension movingForGrid) / pyramidSelectionWidgetExtension movingLap) rounded * pyramidSelectionWidgetExtension movingLap
 ]
 
+{ #category : #accessing }
+PyramidDynamicResizer >> defaultResizeElementSize [
+
+	^ 8@8
+]
+
 { #category : #adding }
 PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement [
-
-	| resizeContainer |
 
 	resizeContainer := BlElement new.
 	resizeContainer
@@ -140,8 +145,10 @@ PyramidDynamicResizer >> dynamicResizer: eventElement originElement: aBlElement 
 		clipChildren: false;
 		zIndex: 1001.
 	resizeContainer layout: BlFrameLayout new.
-	resizeContainer constraints horizontal matchParent.
-	resizeContainer constraints vertical matchParent.
+	"resizeContainer constraints horizontal matchParent.
+	resizeContainer constraints vertical matchParent"
+	resizeContainer extent: aBlElement extent + (resizeElementSize/2).
+	eventElement clipChildren: false.
 
 	moveEventRight := self moveSpaceEventRight: aBlElement.
 	rightDynamicSize := self createRightResizerElement: aBlElement.
@@ -175,10 +182,11 @@ PyramidDynamicResizer >> editor: aPyramidEditor [
 { #category : #initialization }
 PyramidDynamicResizer >> initialize [ 
 	
-	resizeElementSize := 8@8.
+	"8@8"
+	resizeElementSize := self defaultResizeElementSize.
 	resizeElementColor := Color black.
 	minimumSizeForRightOrBottom := 50.
-	minimumSizeForBottomAndRight := 30
+	minimumSizeForBottomAndRight := 15
 ]
 
 { #category : #actions }
@@ -215,7 +223,9 @@ PyramidDynamicResizer >> moveSpaceEventBottom: aBlElement [
 						   - pyramidSelectionWidgetExtension movingForGrid y).
 					  aBlElement extent y < minimumSizeForRightOrBottom
 						  ifTrue: [ rightDynamicSize extent: 0 @ 0 ]
-						  ifFalse: [ rightDynamicSize extent: resizeElementSize ] ] ]
+						  ifFalse: [ rightDynamicSize extent: resizeElementSize ].
+					  resizeContainer extent: ((aBlElement extent x @ (self currentTranslation y
+						   - pyramidSelectionWidgetExtension movingForGrid y)) + (resizeElementSize / 2)) ] ]
 ]
 
 { #category : #'event creation' }
@@ -252,8 +262,13 @@ PyramidDynamicResizer >> moveSpaceEventBottomAndRight: aBlElement [
 					  (aBlElement extent x < minimumSizeForBottomAndRight and: [
 						   aBlElement extent y < minimumSizeForBottomAndRight ])
 						  ifTrue: [ bottomAndRightDynamicSize extent: 0 @ 0 ]
-						  ifFalse: [
-						  bottomAndRightDynamicSize extent: resizeElementSize ] ] ]
+						  ifFalse: [ bottomAndRightDynamicSize extent: resizeElementSize ].
+					
+					  resizeContainer extent: (self currentTranslation x
+						  - pyramidSelectionWidgetExtension movingForGrid x
+						  @ (self currentTranslation y
+							   - pyramidSelectionWidgetExtension movingForGrid y))
+						  + (resizeElementSize / 2) ] ]
 ]
 
 { #category : #'event creation' }
@@ -265,7 +280,7 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 			  evt primaryButtonPressed
 				  ifFalse: [
 					  evt consumed: true.
-					  self resizeCommand: aBlElement with: aBlElement size.
+					  self resizeCommand: aBlElement with: aBlElement extent.
 					  aBlElement userData removeKey: #pyramidPreviousDynamicResize.
 					  pyramidSelectionWidgetExtension elementAtEvents
 						  removeEventHandler: moveEventRight ]
@@ -279,7 +294,12 @@ PyramidDynamicResizer >> moveSpaceEventRight: aBlElement [
 						  @ aBlElement extent y.
 					  aBlElement extent x < minimumSizeForRightOrBottom
 						  ifTrue: [ bottomDynamicSize size: 0 @ 0 ]
-						  ifFalse: [ bottomDynamicSize extent: resizeElementSize ] ] ]
+						  ifFalse: [ bottomDynamicSize extent: resizeElementSize ].
+					
+					  resizeContainer extent: (self currentTranslation x
+						  - pyramidSelectionWidgetExtension movingForGrid x
+						  @ aBlElement extent y)
+						  + (resizeElementSize / 2) ] ]
 ]
 
 { #category : #'accessing - classes' }
@@ -341,6 +361,21 @@ PyramidDynamicResizer >> resizeCommand: aBlElement with: aSize [
 		on: {aBlElement}
 		with: aSize
 
+]
+
+{ #category : #accessing }
+PyramidDynamicResizer >> resizeElementSize [
+
+	^ resizeElementSize
+]
+
+{ #category : #accessing }
+PyramidDynamicResizer >> resizeElementSize: aSize [
+
+	resizeElementSize := aSize.
+	rightDynamicSize extent: aSize.
+	bottomDynamicSize extent: aSize.
+	bottomAndRightDynamicSize extent: aSize
 ]
 
 { #category : #connecting }

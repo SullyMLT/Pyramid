@@ -116,12 +116,8 @@ PyramidSpaceZoomPlugin >> connectOn: aPyramidEditor [
 	pyramidSelectionWidgetExtension ifNil: [ ^ self ].
 
 	pyramidSelectionWidgetExtension scaleFactor: self currentScaleFactor.
-
-	self installOnZoomSpace.
-
-	sizeElementExtent := (pyramidSelectionWidgetExtension elementAtMain
-		                      childWithId: #MainExtension_sizeElement)
-		                     extent
+	
+	self installOnZoomSpace
 ]
 
 { #category : #'as yet unclassified' }
@@ -326,7 +322,7 @@ PyramidSpaceZoomPlugin >> installOnPixelGrid [
 { #category : #displaying }
 PyramidSpaceZoomPlugin >> installOnZoomSpace [
 
-	pyramidSelectionWidgetExtension elementAtEvents addEventHandler:
+	spacePlugin addEventHandlerToSpaceEventCollection:
 		(BlEventHandler
 			 on: BlMouseWheelEvent
 			 do: [ :evt |
@@ -468,6 +464,10 @@ PyramidSpaceZoomPlugin >> valueOfPixelGridToShow: aScaleValue [
 PyramidSpaceZoomPlugin >> windowOpenBy: aPyramidEditor [
 
 	| position aUIElement |
+
+	sizeElementExtent := (pyramidSelectionWidgetExtension elementAtMain
+		                      childWithId: #MainExtension_sizeElement)
+		                     extent.
 	
 	aUIElement := BlElement new.
 	aUIElement

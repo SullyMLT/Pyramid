@@ -10,7 +10,8 @@ Class {
 		'positionOrigin',
 		'currentTranslation',
 		'moveEvent',
-		'pyramidWheelTransformExtension'
+		'pyramidWheelTransformExtension',
+		'spacePlugin'
 	],
 	#category : #'Pyramid-Bloc-plugin-space-zoom-move'
 }
@@ -21,10 +22,8 @@ PyramidSpaceMovePlugin >> connectOn: aPyramidEditor [
 	self pluginFromPyramid: aPyramidEditor.
 	
 	pyramidWheelTransformExtension ifNil: [ ^ self ].
-
-	self installOnMoveSpace.
 	
-	pyramidWheelTransformExtension elementAtEvents background: Color black; opacity: 0.5
+	self installOnMoveSpace
 ]
 
 { #category : #accessing }
@@ -99,7 +98,7 @@ PyramidSpaceMovePlugin >> initialize [
 { #category : #displaying }
 PyramidSpaceMovePlugin >> installOnMoveSpace [
 
-	pyramidWheelTransformExtension elementAtMain addEventHandler:
+	spacePlugin addEventHandlerToSpaceEventCollection:
 		(BlEventHandler
 			 on: BlPrimaryMouseDownEvent
 			 do: [ :evt |
@@ -110,7 +109,7 @@ PyramidSpaceMovePlugin >> installOnMoveSpace [
 				 moveTo ifNotNil: [
 					 self positionOrigin: evt position
 						 - pyramidWheelTransformExtension currentTransformTranslation.
-					 pyramidWheelTransformExtension elementAtMain addEventHandler:
+					 pyramidWheelTransformExtension elementAtDisplays space addEventHandler:
 						 moveEvent.
 					 evt consumed: true ] ]) 
 	
@@ -123,7 +122,7 @@ PyramidSpaceMovePlugin >> moveSpaceEvent [
 		  on: BlMouseMoveEvent
 		  do: [ :evt |
 			  evt primaryButtonPressed ifFalse: [
-				  pyramidWheelTransformExtension elementAtMain
+				  pyramidWheelTransformExtension elementAtDisplays space
 					  removeEventHandler: moveEvent ].
 				
 			  pyramidWheelTransformExtension isOnlyCtrlKeyPressed ifTrue: [
@@ -136,7 +135,7 @@ PyramidSpaceMovePlugin >> moveSpaceEvent [
 { #category : #'accessing - classes' }
 PyramidSpaceMovePlugin >> pluginFromPyramid: aPyramidEditor [
 
-	| spacePlugin listOfSpaceExtension pyramidWheelTransformExtensionSet listOfPlugins pluginSorted |
+	| listOfSpaceExtension pyramidWheelTransformExtensionSet listOfPlugins pluginSorted |
 	
 	listOfPlugins := aPyramidEditor plugins.
 	pluginSorted := listOfPlugins select: [ :extensions | extensions isKindOf: PyramidSpacePlugin ].
